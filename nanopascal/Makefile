@@ -5,6 +5,7 @@ HDR_DIR= $(SRC_DIR)/headers
 BIN= bin
 GCC= g++
 GCC-FLAGS= -std=c++11 -g -c -I $(HDR_DIR) -o
+TEST-FILES_DIR= ./test
 
 SRC_FILES= $(wildcard $(SRC_DIR)/*.cpp)
 OBJ_FILES= $(patsubst $(SRC_DIR)/%.cpp, $(BIN_DIR)/%.o,$(SRC_FILES))
@@ -28,7 +29,7 @@ $(BIN_DIR)/main.o :$(SRC_DIR)/main.cpp
 debug:
 
 run: $(OUTPUT)
-	$(OUTPUT) ./test/src.txt
+	$(OUTPUT) $(TEST-FILES_DIR)/HelloWorld.pas
 
 clean:
 	rm -f *.o

@@ -1,0 +1,3 @@
+[submodule "nanopascal/nano_pascal_examples"]
+	path = nanopascal/nano_pascal_examples
+	url = https://github.com/derickarzu/nano_pascal_examples

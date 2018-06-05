@@ -7,7 +7,7 @@ int main(int argc, char const *argv[]) {
 	Symbol& token= mylexer.ResolveToken();
 	std::cout<<"ID\t\tSymbol\t\tTokens\n";
 	do {
-		std::cout<<token.id<<"\t\t"<<token.current_lexeme<<"\t\t"<<token.name<<'\n';
+		std::cout<<token<<'\n';
 		token= mylexer.ResolveToken();
 	} while(token.id != Symbols::T_EOF.id);
 

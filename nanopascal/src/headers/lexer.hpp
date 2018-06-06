@@ -2,8 +2,8 @@
 #define LEXER_HPP
 #include <fstream>
 #include <map>
-#include <string>
 #include <functional>
+#include "common.hpp"
 #include "symbols.hpp"
 
 class Lexer{
@@ -13,7 +13,7 @@ public:
 
 private:
 	char GetNextChar();
-	void ConsumeSequence(std::function <bool(char)> func);
+	void ConsumeSequence(std::function <bool(char)> func, bool);
 	char current_char;
 	int current_column, current_row;
 	std::ifstream& input;

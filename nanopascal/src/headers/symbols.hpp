@@ -1,7 +1,6 @@
 #ifndef SYMBOLS_HPP
 #define SYMBOLS_HPP
-#include <string>
-#include <iostream>
+#include "common.hpp"
 
 class Symbol{
 public:
@@ -33,7 +32,8 @@ namespace Symbols{
 				T_OP_ADD(105, "Operator Add"),
 				T_OP_SUB(106, "Operator Subtract"),
 				T_EPSILON(1, "Epsilon"),
-				T_ID(107, "Identifier");
+				T_ID(107, "Identifier"),
+				T_NUM(108, "Number");
 	static NonTerminal
 				NT_VAR(256, "Variable"),
 				NT_WRTLN_STMNT(258, "Writeln Statement");

@@ -14,6 +14,7 @@ public:
 
 private:
 	char GetNextChar();
+	bool PeekAndCompare(char t);
 	void ConsumeSequence(std::function <bool(char)> func, bool);
 	char current_char;
 	int current_column, current_row;
@@ -23,7 +24,13 @@ private:
 		{"program", Symbols::T_PROG},
 		{"begin", Symbols::T_BEGIN},
 		{"end", Symbols::T_END},
-		{"writeln", Symbols::T_WRTLN}
+		{"writeln", Symbols::T_WRTLN},
+		{"div", Symbols::T_OP_DIV},
+		{"mod", Symbols::T_OP_MOD},
+		{"var", Symbols::T_VAR},
+		{"integer", Symbols::T_INT_TYPE},
+		{"char", Symbols::T_CHAR_TYPE},
+		{"boolean", Symbols::T_BOOL_TYPE}
 	};
 };
 #endif

@@ -34,8 +34,20 @@ namespace Symbols{
 				T_NUM(108, "Number"),
 				T_WRTLN(109, "Writeln Keyword"),
 				T_OPEN_PAR(110, "Open Parenthesis"),
-				T_CLOSE_PAR(111, "Close Parenthesis");
+				T_CLOSE_PAR(111, "Close Parenthesis"),
+				T_COMMA(112, "Comma"),
+				T_SEMICOLON(113, "Colon"),
+				T_OPEN_CURLY(114, "Open Curly Brackets"),
+				T_CLOSE_CURLY(115, "Close Curly Brackets"),
+				T_EQUALS(116, "Equals sign"),
+				T_OP_MULT(117, "Multiplication Operator"),
+				T_OP_DIV(118, "Division Operator"),
+				T_OP_MOD(119, "Modular Operator"),
+				T_VAR(120, "Var keyword"),
+				T_INT_TYPE(121, "Integer keyword"),
+				T_CHAR_TYPE(122, "Character keyword"),
+				T_BOOL_TYPE(123, "Boolean keyword");
 	static NonTerminal
-				NT_VAR(256, "Variable");
+				NT_VAR(256, "placeholder");
 }
 #endif

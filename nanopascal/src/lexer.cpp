@@ -3,13 +3,13 @@
 	do{lexeme= current_char;\
 	return tk;}while(0)
 Lexer::Lexer(std::ifstream& input) : input(input){
-	current_row= 0, current_column= 0;
+	current_row= 1, current_column= 1;
 }
 
 char Lexer::GetNextChar(){
 	char t;
 	if (input.get(t)){
-		(t == '\n') ? current_column++ : current_row++, current_column= 0;
+		(t == '\n') ? (current_row++, current_column= 1) : current_column++;
 		return tolower(t);
 	}
 	else
@@ -22,17 +22,22 @@ std::string Lexer::GetCurrentLexeme(){
 
 void Lexer::ConsumeSequence(std::function <bool(char)> func, bool unget= false) {
 	do{
-		lexeme+= current_char;
-		current_char= GetNextChar();
 		if (!current_char){
-			err<<"Failed to close sequence "<<lexeme;
+			err<<"Unexpected End of File, sequence left open: "<<lexeme;
 			DisplayError(err, current_row, current_column);
 		}
+		lexeme+= current_char;
+		current_char= GetNextChar();
 	}while(func(current_char));
-	if (unget)
+	if (unget){
 		input.unget();
+		current_column--;
+	}
 }
 
+bool Lexer::PeekAndCompare(char t){
+	return (input.peek()==t) ? (GetNextChar(), true) : false;
+}
 
 Symbol& Lexer::ResolveToken(){
 	while (1){
@@ -46,13 +51,29 @@ Symbol& Lexer::ResolveToken(){
 			case '+': RETURN_TOKEN(Symbols::T_OP_ADD);
 			case '-': RETURN_TOKEN(Symbols::T_OP_SUB);
 			case ')': RETURN_TOKEN(Symbols::T_CLOSE_PAR);
+			case ',': RETURN_TOKEN(Symbols::T_COMMA);
+			case '*': RETURN_TOKEN(Symbols::T_OP_MULT);
+			case ':':
+				if (PeekAndCompare('=')){
+					lexeme+= ":=";
+					return Symbols::T_EQUALS;
+				}
+				RETURN_TOKEN(Symbols::T_SEMICOLON);
+			case '{':
+				if(PeekAndCompare('$')){
+					std::cout<<"FOUND A DIRECTIVE"<<std::endl;
+					ConsumeSequence({
+						[this](char character){return (character == '}') ? ((lexeme+= character), false): true;}
+					});continue;
+				}
+				RETURN_TOKEN(Symbols::T_OPEN_CURLY);
+			case '}': RETURN_TOKEN(Symbols::T_CLOSE_CURLY);
 			case '(':
-				if (GetNextChar() == '*'){
+				if (PeekAndCompare('*')){
 					ConsumeSequence([this](char character){
-						return (character == '*' && GetNextChar() == ')') ? false : (input.unget(),true);});
+						return (PeekAndCompare(')') && character == '*') ? false : true;});
 					continue;
 				}
-				input.unget();
 			RETURN_TOKEN(Symbols::T_OPEN_PAR);
 			case '\'':
 				ConsumeSequence(//When it finds ' then break out of loop and save that char to lexeme

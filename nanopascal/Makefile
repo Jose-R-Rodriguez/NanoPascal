@@ -28,9 +28,10 @@ $(BIN_DIR)/main.o :$(SRC_DIR)/main.cpp
 	$(GCC) $(GCC-FLAGS) $@ $<
 
 debug:
-
 run: $(OUTPUT)
-	$(OUTPUT) $(TEST-FILES_DIR)/HelloWorld.pas
+	$(OUTPUT) ./test.pas
+#run: $(OUTPUT)
+#	$(OUTPUT) $(TEST-FILES_DIR)/HelloWorld.pas
 
 run_all: $(OUTPUT)
 	$(OUTPUT) $(TEST-FILES)

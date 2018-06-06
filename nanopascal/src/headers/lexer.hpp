@@ -10,6 +10,7 @@ class Lexer{
 public:
 	Lexer(std::ifstream& input);
 	Symbol& ResolveToken();
+	std::string GetCurrentLexeme();
 
 private:
 	char GetNextChar();
@@ -22,7 +23,7 @@ private:
 		{"program", Symbols::T_PROG},
 		{"begin", Symbols::T_BEGIN},
 		{"end", Symbols::T_END},
-		{"writeln", Symbols::NT_WRTLN_STMNT}
+		{"writeln", Symbols::T_WRTLN}
 	};
 };
 #endif

@@ -8,8 +8,6 @@ public:
 	Symbol(int, std::string);
 	int id;
 	std::string name;
-	std::string current_lexeme;
-	Symbol& SetSymbolLexeme(std::string);
 };
 
 class Terminal: public Symbol{
@@ -25,17 +23,19 @@ namespace Symbols{
 	static Terminal
 				T_EOF(254, "End of File"),
 				T_EOE(253, "End of Expression"),
-				T_PROG(101, "Program"),
-				T_BEGIN(102, "Begin"),
-				T_END(103, "End"),
+				T_PROG(101, "Program Keyword"),
+				T_BEGIN(102, "Begin Keyword"),
+				T_END(103, "End Keyword"),
 				T_STR_LIT(104, "String Literal"),
 				T_OP_ADD(105, "Operator Add"),
 				T_OP_SUB(106, "Operator Subtract"),
 				T_EPSILON(1, "Epsilon"),
 				T_ID(107, "Identifier"),
-				T_NUM(108, "Number");
+				T_NUM(108, "Number"),
+				T_WRTLN(109, "Writeln Keyword"),
+				T_OPEN_PAR(110, "Open Parenthesis"),
+				T_CLOSE_PAR(111, "Close Parenthesis");
 	static NonTerminal
-				NT_VAR(256, "Variable"),
-				NT_WRTLN_STMNT(258, "Writeln Statement");
+				NT_VAR(256, "Variable");
 }
 #endif

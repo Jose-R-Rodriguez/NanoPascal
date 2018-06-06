@@ -1,1 +1,1 @@
-+ program myprog
++ program myprog (**) 'wtfman

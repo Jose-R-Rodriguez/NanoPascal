@@ -57,7 +57,9 @@ namespace Symbols{
 				T_LT_OR_ET(130, "Less Than or Equals To"),
 				T_OP_SHL(131, "Shift Left"),
 				T_OP_SHR(132, "Shift Right"),
-				T_OP_XOR(133, "Bitwise XOR Operator");
+				T_OP_XOR(133, "Bitwise XOR Operator"),
+				T_OP_NOT(134, "Bitwise NOT Operator"),
+				T_Hex_Num(135, "Hexdecimal Num");
 	static NonTerminal
 				NT_VAR(256, "placeholder");
 }

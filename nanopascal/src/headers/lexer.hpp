@@ -30,7 +30,13 @@ private:
 		{"var", Symbols::T_VAR},
 		{"integer", Symbols::T_INT_TYPE},
 		{"char", Symbols::T_CHAR_TYPE},
-		{"boolean", Symbols::T_BOOL_TYPE}
+		{"boolean", Symbols::T_BOOL_TYPE},
+		{"not", Symbols::T_OP_NOT},
+		{"and", Symbols::T_OP_AND},
+		{"or", Symbols::T_OP_OR},
+		{"xor", Symbols::T_OP_XOR},
+		{"shl", Symbols::T_OP_SHL},
+		{"shr", Symbols::T_OP_SHR}
 	};
 };
 #endif

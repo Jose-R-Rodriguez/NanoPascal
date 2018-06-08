@@ -53,9 +53,12 @@ Symbol& Lexer::ResolveToken(){
 			case ')': RETURN_TOKEN(Symbols::T_CLOSE_PAR);
 			case ',': RETURN_TOKEN(Symbols::T_COMMA);
 			case '*': RETURN_TOKEN(Symbols::T_OP_MULT);
+			case '$':
+					ConsumeSequence([](char digit){return isxdigit(digit);}, true);
+					return Symbols::T_Hex_Num;
 			case '>':
 				if(PeekAndCompare('=')){
-					lexeme+="<=";
+					lexeme+=">=";
 					return Symbols::T_GT_OR_ET;
 				}
 			RETURN_TOKEN(Symbols::T_GREATER_THAN);
@@ -75,10 +78,13 @@ Symbol& Lexer::ResolveToken(){
 			case '{':
 				if(PeekAndCompare('$')){
 					std::cout<<"FOUND A DIRECTIVE"<<std::endl;
-					ConsumeSequence({
+					ConsumeSequence(
 						[this](char character){return (character == '}') ? ((lexeme+= character), false): true;}
-					});continue;
+					);continue;
 				}
+				else{
+					ConsumeSequence([this](char character){return !(character == '}');});
+				}continue;
 				RETURN_TOKEN(Symbols::T_OPEN_CURLY);
 			case '}': RETURN_TOKEN(Symbols::T_CLOSE_CURLY);
 			case '(':
@@ -93,6 +99,11 @@ Symbol& Lexer::ResolveToken(){
 					[this](char character){return (character == '\'') ? (lexeme+= character), false: true;}
 				);
 				return Symbols::T_STR_LIT;
+			case '/':
+				if(PeekAndCompare('/')){
+					ConsumeSequence([this](char character){return !(character=='\n');});
+					continue;
+				}
 			case '\n':
 			case ' ': continue;
 			default:

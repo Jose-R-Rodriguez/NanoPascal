@@ -43,7 +43,7 @@ Symbol& Lexer::ResolveToken(){
 	while (1){
 		current_char= GetNextChar(), lexeme= "";
 		switch (current_char) {
-			case '.':
+			case '.': RETURN_TOKEN(Symbols::T_END_OF_PROG);
 			case 0:
 				std::cout<<"END OF FILE"<<std::endl;
 				return Symbols::T_EOF;
@@ -53,6 +53,19 @@ Symbol& Lexer::ResolveToken(){
 			case ')': RETURN_TOKEN(Symbols::T_CLOSE_PAR);
 			case ',': RETURN_TOKEN(Symbols::T_COMMA);
 			case '*': RETURN_TOKEN(Symbols::T_OP_MULT);
+			case '>':
+				if(PeekAndCompare('=')){
+					lexeme+="<=";
+					return Symbols::T_GT_OR_ET;
+				}
+			RETURN_TOKEN(Symbols::T_GREATER_THAN);
+			case '<':
+				if(PeekAndCompare('=')){
+					lexeme+="<=";
+					return Symbols::T_LT_OR_ET;
+				}
+				RETURN_TOKEN(Symbols::T_LESS_THAN);
+			case '=': RETURN_TOKEN(Symbols::T_EQUALS_TO);
 			case ':':
 				if (PeekAndCompare('=')){
 					lexeme+= ":=";

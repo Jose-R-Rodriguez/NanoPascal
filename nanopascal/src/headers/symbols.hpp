@@ -46,7 +46,18 @@ namespace Symbols{
 				T_VAR(120, "Var keyword"),
 				T_INT_TYPE(121, "Integer keyword"),
 				T_CHAR_TYPE(122, "Character keyword"),
-				T_BOOL_TYPE(123, "Boolean keyword");
+				T_BOOL_TYPE(123, "Boolean keyword"),
+				T_END_OF_PROG(124, "End of Program"),
+				T_OP_AND(125, "Bitwise AND Operator"),
+				T_OP_OR(126, "Bitwise OR Operator"),
+				T_LESS_THAN(127, "Less Than"),
+				T_GREATER_THAN(128, "Greater Than"),
+				T_EQUALS_TO(134, "Equals To"),
+				T_GT_OR_ET(129, "Greater Than or Equals To"),
+				T_LT_OR_ET(130, "Less Than or Equals To"),
+				T_OP_SHL(131, "Shift Left"),
+				T_OP_SHR(132, "Shift Right"),
+				T_OP_XOR(133, "Bitwise XOR Operator");
 	static NonTerminal
 				NT_VAR(256, "placeholder");
 }

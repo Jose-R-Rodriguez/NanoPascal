@@ -8,7 +8,7 @@ Lexer::Lexer(std::ifstream& input) : input(input){
 }
 
 std::set<std::string> Lexer::declared_directives={
-	{"testing"}
+	{"nanopascal"}
 };
 
 char Lexer::GetNextChar(bool case_sensitive= false){
@@ -83,6 +83,10 @@ Symbol& Lexer::ProcessDirective(){
 				active_directives.push(temp);
 				bool found_else;
 				do{
+					std::cout<<"--------------"<<std::endl;
+					PrintActiveDirectives();
+					//Else is resolving the endif token, therefore removing it from the top of the stack
+					//even though that else belonged to him and not someone else
 					next_token= ResolveToken();
 					found_else= std::get<1>(active_directives.top());
 				}while (!found_else);

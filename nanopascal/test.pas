@@ -2,8 +2,8 @@ program Directives;
 begin
 {$ifdef NANOPASCAL}
 {$ifdef mykeyword}
-{$endif}
 {$else}
+{$endif}
     writeln('Hello World from NanoPascal');
 {$else}
     writeln('Hello World from Other Pascal Compiler');

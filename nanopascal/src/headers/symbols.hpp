@@ -19,7 +19,15 @@ class NonTerminal: public Symbol{
 public:
 	NonTerminal(int id, std::string name):Symbol(id, name){};
 };
+
+class PreprocessorSymbols: public Symbol{
+public:
+	Symbol& els;
+	PreprocessorSymbols(int, std::string, Symbol&);
+};
+
 namespace Symbols{
+	static Symbol Pre_Empty(0, "Empty");
 	static Terminal
 				T_EOF(254, "End of File"),
 				T_EOE(253, "End of Expression"),
@@ -59,8 +67,14 @@ namespace Symbols{
 				T_OP_SHR(132, "Shift Right"),
 				T_OP_XOR(133, "Bitwise XOR Operator"),
 				T_OP_NOT(134, "Bitwise NOT Operator"),
-				T_Hex_Num(135, "Hexdecimal Num");
+				T_Hex_Num(135, "Hexdecimal Num"),
+				T_NOT_ET(136, "Not Equals To");
 	static NonTerminal
 				NT_VAR(256, "placeholder");
+	static PreprocessorSymbols
+				Pre_If_Def(1, "Preprocessor If Def", Pre_Empty),
+				Pre_If_N_Def(2, "Preprocessor If not Def", Pre_Empty),
+				Pre_Else(3, "Preprocessor Else", Pre_Empty),
+				Pre_End_If(4, "Preprocessor End If", Pre_Empty);
 }
 #endif

@@ -67,6 +67,7 @@ Symbol& Lexer::ProcessDirective(){
 	Symbol& directive_action= Keywords.at(lexeme);
 	if(directive_action.id == Symbols::Pre_If_Def.id){
 		Symbol& next_token= GetNextToken();
+		GetNextChar();
 		if (next_token.id == Symbols::T_ID.id){
 			if (ExistsInIterable(declared_directives, lexeme)){
 				//if the identifier that came in exists in our declared directives
@@ -82,8 +83,8 @@ Symbol& Lexer::ProcessDirective(){
 				active_directives.push(temp);
 				bool found_else;
 				do{
-					found_else= std::get<1>(active_directives.top());
 					next_token= ResolveToken();
+					found_else= std::get<1>(active_directives.top());
 				}while (!found_else);
 				return next_token;
 			}

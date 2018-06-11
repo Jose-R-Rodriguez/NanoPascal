@@ -11,6 +11,7 @@ void LexerTester(std::string file_name){
 		std::cout<<token<<std::setw(25)<<mylexer.GetCurrentLexeme()<<'\n';
 		token= mylexer.ResolveToken();
 	} while(token.id != Symbols::T_EOF.id);
+	std::cout<<token<<std::setw(25)<<mylexer.GetCurrentLexeme()<<'\n';
 
 	input_file.close();
 }

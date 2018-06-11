@@ -7,9 +7,6 @@ Lexer::Lexer(std::ifstream& input) : input(input){
 	current_row= 1, current_column= 1;
 }
 
-std::set<std::string> Lexer::declared_directives={
-	{"nanopascal"}
-};
 
 char Lexer::GetNextChar(bool case_sensitive= false){
 	char t;
@@ -20,9 +17,7 @@ char Lexer::GetNextChar(bool case_sensitive= false){
 	else
 		return 0;
 }
-void Lexer::LookAheadOne(char t){
-	int placeholder;
-}
+
 std::string Lexer::GetCurrentLexeme(){
 	return lexeme;
 }
@@ -63,57 +58,70 @@ bool Lexer::PeekAndCompare(char t){
 Symbol& Lexer::ResolveToken(){
 	return GetNextToken();
 }
+
+Symbol& Lexer::DoIfDef(){
+	Symbol& next_token= GetNextToken();
+	GetNextChar();
+	if (next_token.id == Symbols::T_ID.id){
+		if (ExistsInIterable(declared_directives, lexeme)){
+			//name, has an else, activated by else
+			directive_structure add_to_stack= {lexeme, false, false};
+			active_directives.push(add_to_stack);
+			return ResolveToken();
+		}
+		else{
+			exit(1);
+		}
+	}
+	else{
+ 			err<<"Invalid Identifier in Directive: \""<<lexeme<<"\"";
+ 			DisplayError(err, current_row, current_column);
+ 		}
+}
+
+Symbol& Lexer::DoElse(){
+	directive_structure top_of_stack= active_directives.top();
+	if(!std::get<1>(top_of_stack)){
+		active_directives.pop();
+		std::get<1>(top_of_stack)= true;
+		active_directives.push(top_of_stack);
+	}
+	if (!std::get<2>(top_of_stack)){
+		int current_stack_size, orig_stack_size= active_directives.size();
+		Symbol* temp;
+		do {
+			temp= &ResolveToken();
+			current_stack_size= active_directives.size();
+		} while(current_stack_size >= orig_stack_size);
+		return *temp;
+	}
+	else{
+		return ResolveToken();
+	}
+	err<<"Extra else in directive";
+	DisplayError(err, current_row, current_column);
+	exit(1);
+}
+
+Symbol& Lexer::DoEndIf(){
+	active_directives.pop();
+	return ResolveToken();
+}
+
 Symbol& Lexer::ProcessDirective(){
 	Symbol& directive_action= Keywords.at(lexeme);
 	if(directive_action.id == Symbols::Pre_If_Def.id){
-		Symbol& next_token= GetNextToken();
-		GetNextChar();
-		if (next_token.id == Symbols::T_ID.id){
-			if (ExistsInIterable(declared_directives, lexeme)){
-				//if the identifier that came in exists in our declared directives
-				//then push that we haven't found an else and it is active
-				directive_structure temp= {lexeme, false, true};
-				active_directives.push(temp);
-				return ResolveToken();
-			}
-			else{
-				//if the identifier can't be found then push it and we havent found an else and its
-				//not active
-				directive_structure temp= {lexeme, false, false};
-				active_directives.push(temp);
-				bool found_else;
-				do{
-					std::cout<<"--------------"<<std::endl;
-					PrintActiveDirectives();
-					//Else is resolving the endif token, therefore removing it from the top of the stack
-					//even though that else belonged to him and not someone else
-					next_token= ResolveToken();
-					found_else= std::get<1>(active_directives.top());
-				}while (!found_else);
-				return next_token;
-			}
-		}
-		else{
-			err<<"Invalid Identifier in Directive: \""<<lexeme<<"\"";
-			DisplayError(err, current_row, current_column);
-		}
+		return DoIfDef();
 	}
 	else if(directive_action.id == Symbols::Pre_Else.id){
-		directive_structure changing= active_directives.top();
-		active_directives.pop();
-		if (std::get<1>(changing)){
-			err<<"Extra else for directive";
-			DisplayError(err, current_row, current_column);
-		}
-		else{
-			std::get<1>(changing)= true;
-			active_directives.push(changing);
-			return ResolveToken();
-		}
+		return DoElse();
 	}
 	else if(directive_action.id == Symbols::Pre_End_If.id){
-		active_directives.pop();
-		return ResolveToken();
+		return DoEndIf();
+	}
+	else{
+		std::cout<<"Panic critical failure"<<std::endl;
+		exit(1);
 	}
 }
 
@@ -134,7 +142,6 @@ Symbol& Lexer::GetNextToken(){
 		switch (current_char) {
 			case '.': RETURN_TOKEN(Symbols::T_END_OF_PROG);
 			case 0:
-				std::cout<<"END OF FILE"<<std::endl;
 				return Symbols::T_EOF;
 			case ';': RETURN_TOKEN(Symbols::T_EOE);
 			case '+': RETURN_TOKEN(Symbols::T_OP_ADD);

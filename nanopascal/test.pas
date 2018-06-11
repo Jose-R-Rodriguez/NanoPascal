@@ -1,11 +1,11 @@
 program Directives;
 begin
-{$ifdef NANOPASCAL}
-{$ifdef mykeyword}
+{$ifdef NANOpASCAL}
+{$ifdef testing}
 {$else}
+writeln('Hello World1');
 {$endif}
-    writeln('Hello World from NanoPascal');
 {$else}
-    writeln('Hello World from Other Pascal Compiler');
+writeln('Hello World2');
 {$endif}
 end.

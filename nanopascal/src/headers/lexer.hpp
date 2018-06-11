@@ -23,14 +23,19 @@ private:
 	void ConsumeSequence(std::function <bool(char)> func, bool);
 	Symbol& EvaluateDirective();
 	Symbol& ProcessDirective();
-	void LookAheadOne(char);
 	void PrintActiveDirectives();
+	Symbol& DoIfDef();
+	Symbol& DoElse();
+	Symbol& DoEndIf();
 	char current_char;
 	int current_column, current_row;
 	std::ifstream& input;
 	std::string lexeme;
 	std::stack<directive_structure> active_directives;
-	static std::set<std::string> declared_directives;
+	std::set<std::string> declared_directives{
+		{"nanopascal"},
+		{"testing"}
+	};
 	std::map <std::string, Symbol> Keywords{
 		{"program", 	Symbols::T_PROG},
 		{"begin", 		Symbols::T_BEGIN},

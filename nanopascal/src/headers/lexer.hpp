@@ -34,7 +34,8 @@ private:
 	std::stack<directive_structure> active_directives;
 	std::set<std::string> declared_directives{
 		{"nanopascal"},
-		{"testing"}
+		{"testing"},
+		{"rando"}
 	};
 	std::map <std::string, Symbol> Keywords{
 		{"program", 	Symbols::T_PROG},

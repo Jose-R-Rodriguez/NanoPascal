@@ -74,13 +74,14 @@ Symbol& Lexer::DoIfDef(){
 			//name, has an else, activated by else
 			directive_structure add_to_stack= {lexeme, false, true};
 			active_directives.push(add_to_stack);
-			bool& found_else= std::get<1>(add_to_stack);
+			bool found_else;
 			int current_stack_size, orig_stack_size= active_directives.size();
 			Symbol *temp;
 			do {
-				current_stack_size= active_directives.size();
 				temp= &ResolveToken();
-			} while(!std::get<1>(add_to_stack) && current_stack_size >= orig_stack_size);
+				found_else= std::get<1>(active_directives.top());
+				current_stack_size= active_directives.size();
+			} while(!found_else && current_stack_size >= orig_stack_size);
 			return *temp;
 		}
 	}

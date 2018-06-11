@@ -15,6 +15,7 @@ public:
 	Lexer(std::ifstream& input);
 	Symbol& ResolveToken();
 	std::string GetCurrentLexeme();
+	void AddDirective(std::string);
 
 private:
 	Symbol& GetNextToken();

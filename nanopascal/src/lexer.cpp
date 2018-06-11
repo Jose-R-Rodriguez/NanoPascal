@@ -79,6 +79,8 @@ Symbol& Lexer::DoIfDef(){
 			Symbol *temp;
 			do {
 				temp= &ResolveToken();
+				if (active_directives.empty())
+					break;
 				found_else= std::get<1>(active_directives.top());
 				current_stack_size= active_directives.size();
 			} while(!found_else && current_stack_size >= orig_stack_size);

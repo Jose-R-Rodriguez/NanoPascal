@@ -70,13 +70,26 @@ Symbol& Lexer::DoIfDef(){
 			return ResolveToken();
 		}
 		else{
-			exit(1);
+			//rewrite this block
+			//name, has an else, activated by else
+			directive_structure add_to_stack= {lexeme, false, true};
+			active_directives.push(add_to_stack);
+			bool& found_else= std::get<1>(add_to_stack);
+			int current_stack_size, orig_stack_size= active_directives.size();
+			Symbol *temp;
+			do {
+				current_stack_size= active_directives.size();
+				temp= &ResolveToken();
+			} while(!std::get<1>(add_to_stack) && current_stack_size >= orig_stack_size);
+			return *temp;
 		}
 	}
 	else{
  			err<<"Invalid Identifier in Directive: \""<<lexeme<<"\"";
  			DisplayError(err, current_row, current_column);
  		}
+	std::cout<<"Fatal error"<<std::endl;
+	exit(99);
 }
 
 Symbol& Lexer::DoElse(){
@@ -180,7 +193,6 @@ Symbol& Lexer::GetNextToken(){
 				if (PeekAndCompare('*')){
 					ConsumeSequence([this](char character){
 						return (PeekAndCompare(')') && character == '*') ? false : true;});
-					std::cout<<lexeme<<std::endl;
 					continue;
 				}
 			RETURN_TOKEN(Symbols::T_OPEN_PAR);

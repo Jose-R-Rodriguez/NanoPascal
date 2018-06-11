@@ -1,11 +1,12 @@
 program Directives;
 begin
 {$ifdef NANOpASCAL}
-{$ifdef testing}
-{$else}
-writeln('Hello World1');
-{$endif}
+{$ifdef tesing}
 {$else}
 writeln('Hello World2');
 {$endif}
+writeln('Hello World1');
+{$else}
+{$endif}
+
 end.

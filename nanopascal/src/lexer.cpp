@@ -32,7 +32,7 @@ void Lexer::ConsumeSequence(std::function <bool(char)> func, bool unget= false) 
 		}
 		lexeme+= current_char;
 		current_char= GetNextChar();
-	}while(func(current_char));
+	} while(func(current_char));
 	if (unget){
 		input.unget();
 		current_column--;
@@ -57,12 +57,8 @@ bool Lexer::PeekAndCompare(char t){
 		return false;
 }
 
-Symbol& Lexer::ResolveToken(){
-	return GetNextToken();
-}
-
 Symbol& Lexer::DoIfDef(){
-	Symbol& next_token= GetNextToken();
+	Symbol& next_token= ResolveToken();
 	GetNextChar();
 	if (next_token.id == Symbols::T_ID.id){
 		if (ExistsInIterable(declared_directives, lexeme)){
@@ -110,6 +106,10 @@ Symbol& Lexer::DoElse(){
 		do {
 			temp= &ResolveToken();
 			current_stack_size= active_directives.size();
+			if (temp->id == Symbols::T_EOF.id && current_stack_size >= orig_stack_size){
+				err<<"Directive left open";
+				DisplayError(err, current_row, current_column);
+			}
 		} while(current_stack_size >= orig_stack_size);
 		return *temp;
 	}
@@ -154,7 +154,7 @@ Symbol& Lexer::EvaluateDirective(){
 	return ProcessDirective();
 }
 
-Symbol& Lexer::GetNextToken(){
+Symbol& Lexer::ResolveToken(){
 	while (1){
 		current_char= GetNextChar(), lexeme= "";
 		switch (current_char) {
@@ -205,7 +205,7 @@ Symbol& Lexer::GetNextToken(){
 				}
 			RETURN_TOKEN(Symbols::T_OPEN_PAR);
 			case '\'':
-				ConsumeSequence(//When it finds ' then break out of loop and save that char to lexeme
+				ConsumeSequence(
 					[this](char character){return (character == '\'') ? (lexeme+= character), false: true;}
 				);
 				return Symbols::T_STR_LIT;
@@ -223,7 +223,7 @@ Symbol& Lexer::GetNextToken(){
 				}
 				else if(isalpha(current_char) || current_char == '_'){
 					ConsumeSequence(
-						[](char alpha){return isalpha(alpha) || alpha == '_';}, true);
+						[](char alpha){return isalpha(alpha) || alpha == '_' || isdigit(alpha);}, true);
 					return (ExistsInIterable(Keywords, lexeme)) ? Keywords.at(lexeme) : Symbols::T_ID;
 				}
 				else{

@@ -19,11 +19,18 @@ int main(int argc, char const *argv[]) {
 		std::cout<<"Choose file to test with"<<std::endl;
 		int i;
 		for(i= 1; i<argc; i++){
+			if (std::string(argv[i]) == "-d")
+				break;
 			std::cout<<i<<"."<<argv[i]<<std::endl;
 		}
+
 		std::cin>>x;
 		std::ifstream input_file(argv[x]);
 		Lexer mylexer(input_file);
+		for (i++ ; i<argc ; i++){
+			std::cout<<"Adding directive: "<<argv[i]<<std::endl;
+			mylexer.AddDirective(argv[i]);
+		}
 		LexerTester(mylexer);
 		input_file.close();
 	}

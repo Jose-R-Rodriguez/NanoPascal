@@ -33,7 +33,7 @@ run: $(OUTPUT)
 	$(OUTPUT) ./test.pas
 
 run_all: $(OUTPUT)
-	$(OUTPUT) $(TEST-FILES)
+	$(OUTPUT) $(TEST-FILES) -d random hola adios
 
 clean:
 	rm -f *.o

@@ -18,7 +18,6 @@ public:
 	void AddDirective(std::string);
 
 private:
-	Symbol& GetNextToken();
 	char GetNextChar(bool);
 	bool PeekAndCompare(char t);
 	void ConsumeSequence(std::function <bool(char)> func, bool);

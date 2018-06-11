@@ -67,8 +67,27 @@ namespace Symbols{
 				T_OP_SHR(132, "Shift Right"),
 				T_OP_XOR(133, "Bitwise XOR Operator"),
 				T_OP_NOT(134, "Bitwise NOT Operator"),
-				T_Hex_Num(135, "Hexdecimal Num"),
-				T_NOT_ET(136, "Not Equals To");
+				T_HEX_NUM(135, "Hexdecimal Num"),
+				T_NOT_ET(136, "Not Equals To"),
+				T_BINARY_NUM(137, "Binary Number"),
+				T_IF(138, "If Keyword"),
+				T_BREAK(139, "Break Keyword"),
+				T_ELSE(140, "Else Keyword"),
+				T_UNTIL(141, "Until Keyword"),
+				T_FOR(142, "For Keyword"),
+				T_DO(143, "Do Keyword"),
+				T_FUNCTION(144, "Function Keyword"),
+				T_PROCEDURE(145, "Procedure Keyword"),
+				T_READ(146, "Read Keyword"),
+				T_TRUE(147, "True Keyword"),
+				T_FALSE(148, "False Keyword"),
+				T_OF(149, "Of Keyword"),
+				T_ARRAY(150, "Array Keyword"),
+				T_WHILE(151, "While Keyword"),
+				T_THEN(152, "Then Keyword"),
+				T_WRITE(153, "Write Keyword"),
+				T_REPEAT(154, "Repeat Keyword"),
+				T_TO(155, "To Keyword");
 	static NonTerminal
 				NT_VAR(256, "placeholder");
 	static PreprocessorSymbols

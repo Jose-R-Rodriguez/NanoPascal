@@ -6,7 +6,9 @@
 Lexer::Lexer(std::ifstream& input) : input(input){
 	current_row= 1, current_column= 1;
 }
-
+void Lexer::AddDirective(std::string direct){
+	declared_directives.insert(direct);
+}
 
 char Lexer::GetNextChar(bool case_sensitive= false){
 	char t;
@@ -168,8 +170,11 @@ Symbol& Lexer::GetNextToken(){
 			case '=': RETURN_TOKEN(Symbols::T_EQUALS_TO);
 			case '}': RETURN_TOKEN(Symbols::T_CLOSE_CURLY);
 			case '$':
-					ConsumeSequence(isxdigit, true);
-					return Symbols::T_Hex_Num;
+				ConsumeSequence(isxdigit, true);
+				return Symbols::T_HEX_NUM;
+			case '%':
+				ConsumeSequence([](char digit){return (digit =='0' || digit=='1');} ,true);
+				return Symbols::T_BINARY_NUM;
 			case '>':
 				if(PeekAndCompare('='))
 					return Symbols::T_GT_OR_ET;

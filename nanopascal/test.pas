@@ -6,6 +6,7 @@ begin
 {$endif}
 {$else}
 {$endif}
+{this is a comment block}
 writeln('Hello World1');
 writeln('Hello World2');
 

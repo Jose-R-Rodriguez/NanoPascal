@@ -34,9 +34,7 @@ private:
 	std::string lexeme;
 	std::stack<directive_structure> active_directives;
 	std::set<std::string> declared_directives{
-		{"nanopascal"},
-		{"testing"},
-		{"rando"}
+		{"nanopascal"}
 	};
 	std::map <std::string, Symbol> Keywords{
 		{"program", 	Symbols::T_PROG},
@@ -58,7 +56,25 @@ private:
 		{"{$ifdef ", 	Symbols::Pre_If_Def},
 		{"{$ifndef ",	Symbols::Pre_If_N_Def},
 		{"{$else}", 	Symbols::Pre_Else},
-		{"{$endif}", 	Symbols::Pre_End_If}
+		{"{$endif}", 	Symbols::Pre_End_If},
+		{"true", 			Symbols::T_TRUE},
+		{"false",			Symbols::T_FALSE},
+		{"read",			Symbols::T_READ},
+		{"procedure",	Symbols::T_PROCEDURE},
+		{"function",	Symbols::T_FUNCTION},
+		{"if",				Symbols::T_IF},
+		{"else",			Symbols::T_ELSE},
+		{"while",			Symbols::T_WHILE},
+		{"until",			Symbols::T_UNTIL},
+		{"then",			Symbols::T_THEN},
+		{"array",			Symbols::T_ARRAY},
+		{"for",				Symbols::T_FOR},
+		{"do",				Symbols::T_DO},
+		{"write",			Symbols::T_WRITE},
+		{"repeat",		Symbols::T_REPEAT},
+		{"break",			Symbols::T_BREAK},
+		{"to",				Symbols::T_TO},
+		{"of",				Symbols::T_OF}
 	};
 };
 #endif

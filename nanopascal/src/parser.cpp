@@ -20,30 +20,88 @@ bool Parser::NextIsAnyOfThese(First& symb, Symbols&... rest){
 
 void Parser::Start(){
 	CheckSequence(Symbols::T_PROG, Symbols::T_ID, Symbols::T_EOE);
-	if (*current_token == Symbols::T_VAR){
-		GetNextToken();
+	Variables();
+	Operations_List();
+}
+
+void Parser::Operations_List(){
+	if (NextIsAnyOfThese(Symbols::T_FUNCTION, Symbols::T_PROCEDURE)){
+		(*current_token==Symbols::T_FUNCTION) ?
+		(GetNextToken(), Function_Header()) : (GetNextToken(), Procedure_Header());
 		Variables();
 	}
 }
 
+void Parser::Function_Header(){
+	CheckSequence(Symbols::T_ID);
+	Argument_decl();
+	CheckSequence(Symbols::T_COLON);
+	DataType();
+	CheckSequence(Symbols::T_EOE);
+}
+
+void Parser::DataType(){
+	if (!(PrimitiveType() || ArrayType())){
+		err<<"Expected Primitive or Array type ";
+		DisplayErr(err);
+	}
+}
+
+void Parser::Procedure_Header(){
+	CheckSequence(Symbols::T_ID);
+	Argument_decl();
+	CheckSequence(Symbols::T_EOE);
+}
+
+void Parser::Argument_decl(){
+	if (*current_token == Symbols::T_OPEN_PAR){
+		GetNextToken();
+		Argument_decl_List();
+		CheckSequence(Symbols::T_CLOSE_PAR);
+	}
+}
+
+void Parser::Argument_decl_List(){
+	if (NextIsAnyOfThese(Symbols::T_VAR, Symbols::T_ID)){
+		if (*current_token==Symbols::T_VAR)
+			GetNextToken();
+		CheckSequence(Symbols::T_ID, Symbols::T_COLON);
+		DataType();
+		Id_List_B();
+	}
+}
+
+void Parser::Id_List_B(){
+	while (*current_token == Symbols::T_EOE){
+		GetNextToken();
+		if (NextIsAnyOfThese(Symbols::T_VAR, Symbols::T_ID)){
+			if (*current_token==Symbols::T_VAR)
+				GetNextToken();
+			CheckSequence(Symbols::T_ID, Symbols::T_COLON);
+			DataType();
+		}
+		else{
+			err<<"Expected var or identifier ";
+			DisplayErr(err);
+		}
+	}
+}
 
 void Parser::Variables(){
-	do {
-		CheckSequence(Symbols::T_ID);
-		Variable_decls();
-	} while(*current_token == Symbols::T_ID);
+	if (*current_token == Symbols::T_VAR){
+		GetNextToken();
+		do {
+			CheckSequence(Symbols::T_ID);
+			Variable_decls();
+		} while(*current_token == Symbols::T_ID);
+	}
 }
 
 void Parser::Variable_decls(){
 	Id_List();
 	CheckSequence(Symbols::T_COLON);
-	//Check if it's a primitivetype or an arraytype
-	if (PrimitiveType() || ArrayType()){
-		CheckSequence(Symbols::T_EOE);
-	}
-	else{
-		err<<"Expected PrimitiveType or ArrayType";
-	}
+	DataType();
+	CheckSequence(Symbols::T_EOE);
 }
 
 bool Parser::PrimitiveType(){
@@ -55,23 +113,21 @@ bool Parser::PrimitiveType(){
 //This will freak and exit if the sequence to declare an array is improper
 //it will also freak and exit if we dont get a primitivetype
 bool Parser::ArrayType(){
-	bool t= NextIsAnyOfThese(Symbols::T_ARRAY);
+	//bool t= NextIsAnyOfThese(Symbols::T_ARRAY);
+	bool t= (*current_token == Symbols::T_ARRAY);
 	if (t){
 		CheckSequence(
 			Symbols::T_ARRAY, Symbols::T_OPEN_BRACK, Symbols::T_NUM, Symbols::T_DOT_SET,
 			Symbols::T_NUM, Symbols::T_CLOSE_BRACK, Symbols::T_OF
 		);
 		if (!PrimitiveType()){
-			err<<"Expected Array type ";
+			err<<"Expected Primitive type ";
 			DisplayErr(err);
 		}
 	}
 	return t;
 }
 
-void Parser::DataType(){
-	int placeholder;
-}
 
 void Parser::Id_List(){
 	while (*current_token == Symbols::T_COMMA){

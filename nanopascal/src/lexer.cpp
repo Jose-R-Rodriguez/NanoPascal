@@ -158,7 +158,10 @@ Symbol& Lexer::ResolveToken(){
 	while (1){
 		current_char= GetNextChar(), lexeme= "";
 		switch (current_char) {
-			case '.': RETURN_TOKEN(Symbols::T_END_OF_PROG);
+			case '.':
+				if (PeekAndCompare('.'))
+					return Symbols::T_DOT_SET;
+				RETURN_TOKEN(Symbols::T_END_OF_PROG);
 			case 0:
 				return Symbols::T_EOF;
 			case ';': RETURN_TOKEN(Symbols::T_EOE);
@@ -169,6 +172,8 @@ Symbol& Lexer::ResolveToken(){
 			case '*': RETURN_TOKEN(Symbols::T_OP_MULT);
 			case '=': RETURN_TOKEN(Symbols::T_EQUALS_TO);
 			case '}': RETURN_TOKEN(Symbols::T_CLOSE_CURLY);
+			case '[': RETURN_TOKEN(Symbols::T_OPEN_BRACK);
+			case ']': RETURN_TOKEN(Symbols::T_CLOSE_BRACK);
 			case '$':
 				ConsumeSequence(isxdigit, true);
 				return Symbols::T_HEX_NUM;
@@ -182,7 +187,7 @@ Symbol& Lexer::ResolveToken(){
 			case ':':
 				if (PeekAndCompare('='))
 					return Symbols::T_EQUALS;
-				RETURN_TOKEN(Symbols::T_SEMICOLON);
+				RETURN_TOKEN(Symbols::T_COLON);
 			case '<':
 				if(PeekAndCompare('='))
 					return Symbols::T_LT_OR_ET;
@@ -215,6 +220,7 @@ Symbol& Lexer::ResolveToken(){
 					continue;
 				}
 			case '\n':
+			case '\t':
 			case ' ': continue;
 			default:
 				if (isdigit(current_char)){

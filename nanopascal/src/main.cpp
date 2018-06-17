@@ -5,12 +5,11 @@
 #include "parser.hpp"
 
 void LexerTester(Lexer& mylexer){
-	//Symbol& token= mylexer.ResolveToken();
 	Symbol* token;
 	do{
 		token= &mylexer.ResolveToken();
 		std::cout<<*token<<std::setw(25)<<mylexer.GetCurrentLexeme()<<std::endl;
-	}while(token->id != Symbols::T_EOF.id);
+	}while(*token != Symbols::T_EOF);
 }
 
 int main(int argc, char const *argv[]) {

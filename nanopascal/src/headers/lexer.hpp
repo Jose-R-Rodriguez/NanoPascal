@@ -15,6 +15,8 @@ public:
 	Symbol& ResolveToken();
 	std::string GetCurrentLexeme();
 	void AddDirective(std::string);
+	int GetCurrentRow(){return current_row;};
+	int GetCurrentColumn(){return current_column;};
 
 private:
 	char GetNextChar(bool);
@@ -34,7 +36,7 @@ private:
 	std::set<std::string> declared_directives{
 		{"nanopascal"}
 	};
-	std::map <std::string, Symbol> Keywords{
+	std::map <std::string, Symbol&> Keywords{
 		{"program", 	Symbols::T_PROG},
 		{"begin", 		Symbols::T_BEGIN},
 		{"end", 			Symbols::T_END},

@@ -12,11 +12,10 @@ std::ostream& operator<<(std::ostream& os, const Symbol& symb){
 }
 PreprocessorSymbols::PreprocessorSymbols(int id, std::string name, Symbol& symb):Symbol(id, name), els(symb){
 }
-Terminal Symbols::T_STR_LIT(104, "String Literal");
-
 namespace Symbols{
 	Symbol Pre_Empty(0, "Empty");
 	Terminal
+				T_STR_LIT(104, "String Literal"),
 				T_EOF(254, "End of File"),
 				T_EOE(253, "End of Expression"),
 				T_PROG(101, "Program Keyword"),
@@ -31,7 +30,7 @@ namespace Symbols{
 				T_OPEN_PAR(110, "Open Parenthesis"),
 				T_CLOSE_PAR(111, "Close Parenthesis"),
 				T_COMMA(112, "Comma"),
-				T_SEMICOLON(113, "Colon"),
+				T_COLON(113, "Colon"),
 				T_OPEN_CURLY(114, "Open Curly Brackets"),
 				T_CLOSE_CURLY(115, "Close Curly Brackets"),
 				T_EQUALS(116, "Equals sign"),
@@ -74,7 +73,8 @@ namespace Symbols{
 				T_THEN(152, "Then Keyword"),
 				T_WRITE(153, "Write Keyword"),
 				T_REPEAT(154, "Repeat Keyword"),
-				T_TO(155, "To Keyword");
+				T_TO(155, "To Keyword"),T_DOT_SET(158, "Dot Set"),
+				T_OPEN_BRACK(156, "Open Bracket"), T_CLOSE_BRACK(157, "Close Bracket");
 	NonTerminal
 				NT_VAR(256, "placeholder");
 	PreprocessorSymbols

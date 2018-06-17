@@ -8,6 +8,12 @@ public:
 	Symbol(int, std::string);
 	int id;
 	std::string name;
+	bool operator==(Symbol& in)const{
+		return this==&in;
+	}
+	bool operator!=(Symbol& in)const{
+		return this!=&in;
+	}
 };
 
 class Terminal: public Symbol{
@@ -30,22 +36,9 @@ public:
 namespace Symbols{
 	extern Symbol Pre_Empty;
 	extern Terminal
-				T_EOF,
-				T_EOE,
-				T_PROG,
-				T_BEGIN,
-				T_END,
-				T_STR_LIT,
-				T_OP_ADD,
-				T_OP_SUB,
-				T_EPSILON,
-				T_ID,
-				T_NUM,
-				T_WRTLN,
-				T_OPEN_PAR,
-				T_CLOSE_PAR,
-				T_COMMA,
-				T_SEMICOLON,
+				T_EOF, T_EOE, T_PROG, T_BEGIN, T_END, T_STR_LIT, T_OP_ADD, T_OP_SUB,
+				T_EPSILON, T_ID, T_NUM, T_WRTLN, T_OPEN_PAR, T_CLOSE_PAR, T_COMMA,
+				T_COLON,
 				T_OPEN_CURLY,
 				T_CLOSE_CURLY,
 				T_EQUALS,
@@ -88,7 +81,7 @@ namespace Symbols{
 				T_THEN,
 				T_WRITE,
 				T_REPEAT,
-				T_TO;
+				T_TO, T_OPEN_BRACK, T_CLOSE_BRACK, T_DOT_SET;
 	extern NonTerminal
 				NT_VAR;
 	extern PreprocessorSymbols

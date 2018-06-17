@@ -29,6 +29,9 @@ void Parser::Operations_List(){
 		(*current_token==Symbols::T_FUNCTION) ?
 		(GetNextToken(), Function_Header()) : (GetNextToken(), Procedure_Header());
 		Variables();
+		CheckSequence(Symbols::T_BEGIN);
+		//Statement_List();
+		CheckSequence(Symbols::T_END, Symbols::T_EOE);
 	}
 }
 

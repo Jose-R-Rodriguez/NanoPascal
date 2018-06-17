@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include "symbols.hpp"
 void DisplayError(std::ostringstream&, int, int);
 extern std::ostringstream err;
 

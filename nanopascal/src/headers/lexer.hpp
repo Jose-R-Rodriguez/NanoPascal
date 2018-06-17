@@ -7,7 +7,6 @@
 #include <tuple>
 #include <functional>
 #include "common.hpp"
-#include "symbols.hpp"
 
 class Lexer{
 public:

@@ -2,15 +2,15 @@
 #include <iomanip>
 #include "common.hpp"
 #include "lexer.hpp"
+#include "parser.hpp"
 
 void LexerTester(Lexer& mylexer){
-	Symbol& token= mylexer.ResolveToken();
-	std::cout<<"ID"<<std::setw(25)<<"Tokens"<<std::setw(25)<<"Symbol\n";
-	do {
-		std::cout<<token<<std::setw(25)<<mylexer.GetCurrentLexeme()<<'\n';
-		token= mylexer.ResolveToken();
-	} while(token.id != Symbols::T_EOF.id);
-	std::cout<<token<<std::setw(25)<<mylexer.GetCurrentLexeme()<<'\n';
+	//Symbol& token= mylexer.ResolveToken();
+	Symbol* token;
+	do{
+		token= &mylexer.ResolveToken();
+		std::cout<<*token<<std::setw(25)<<mylexer.GetCurrentLexeme()<<std::endl;
+	}while(token->id != Symbols::T_EOF.id);
 }
 
 int main(int argc, char const *argv[]) {
@@ -31,13 +31,15 @@ int main(int argc, char const *argv[]) {
 			std::cout<<"Adding directive: "<<argv[i]<<std::endl;
 			mylexer.AddDirective(argv[i]);
 		}
-		LexerTester(mylexer);
+		//LexerTester(mylexer);
+		Parser myparser(mylexer);
 		input_file.close();
 	}
 	if (argc<=2){
 		std::ifstream input_file(argv[argc-1]);
 		Lexer mylexer(input_file);
-		LexerTester(mylexer);
+		//LexerTester(mylexer);
+		Parser myparser(mylexer);
 		input_file.close();
 }
 

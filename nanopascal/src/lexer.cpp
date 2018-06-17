@@ -191,7 +191,7 @@ Symbol& Lexer::ResolveToken(){
 				RETURN_TOKEN(Symbols::T_LESS_THAN);
 			case '{':
 				if(PeekAndCompare('$')){
-					return EvaluateDirective();
+					return EvaluateDirective();Symbol& ResolveToken();
 				}
 				else{
 					ConsumeSequence([this](char character){return !(character == '}');});

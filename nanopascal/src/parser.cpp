@@ -22,6 +22,9 @@ void Parser::Start(){
 	CheckSequence(Symbols::T_PROG, Symbols::T_ID, Symbols::T_EOE);
 	Variables();
 	Operations_List();
+	CheckSequence(Symbols::T_BEGIN);
+	Statement_List();
+	CheckSequence(Symbols::T_END, Symbols::T_END_OF_PROG);
 }
 
 void Parser::Operations_List(){
@@ -37,7 +40,7 @@ void Parser::Operations_List(){
 }
 
 void Parser::Statement_List(){
-	while (NextIsAnyOfThese(Symbols::T_ID, Symbols::T_IF, Symbols::T_WHILE, Symbols::T_REPEAT, Symbols::T_FOR, Symbols::T_BREAK, Symbols::T_CONTINUE)){
+	while (NextIsAnyOfThese(Symbols::T_ID, Symbols::T_IF, Symbols::T_WHILE, Symbols::T_REPEAT, Symbols::T_FOR, Symbols::T_BREAK, Symbols::T_CONTINUE, Symbols::T_WRITE, Symbols::T_WRTLN, Symbols::T_READ)){
 		Statement();
 	}
 }

@@ -10,3 +10,7 @@ procedure test ();
 begin
 myfunction;
 end;
+
+BEGIN
+
+END.

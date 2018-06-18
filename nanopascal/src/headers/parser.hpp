@@ -58,5 +58,6 @@ private:
 	void Args_List();
 	void Expression_List();
 	void Expression_B();
+	void Left_Value();
 };
 #endif

@@ -61,22 +61,47 @@ void Parser::Statement(){
 	}
 	else if (*current_token == Symbols::T_WHILE){
 		GetNextToken();
+		Expression();
+		CheckSequence(Symbols::T_DO);
+		Block();
 	}
 	else if (*current_token == Symbols::T_REPEAT){
 		GetNextToken();
+		Block();
+		CheckSequence(Symbols::T_UNTIL);
+		Expression();
+		CheckSequence(Symbols::T_EOE);
 	}
 	else if (*current_token == Symbols::T_FOR){
 		GetNextToken();
+		Assign();
+		Expression();
+		CheckSequence(Symbols::T_TO);
+		Expression();
+		CheckSequence(Symbols::T_DO);
+		Block();
 	}
-	else if (*current_token == Symbols::T_BREAK){
-		GetNextToken();
-	}
-	else if (*current_token == Symbols::T_CONTINUE){
+	else if (NextIsAnyOfThese(Symbols::T_BREAK, Symbols::T_CONTINUE)){
 		GetNextToken();
 	}
 	else{
-		err<<"Expected Assignment or statment call ";
+		err<<"Expected Assignment or statement call ";
 		DisplayErr(err);
+	}
+}
+
+void Parser::Assign(){
+	Left_Value();
+	CheckSequence(Symbols::T_EQUALS_TO);
+	Expression();
+}
+
+void Parser::Left_Value(){
+	CheckSequence(Symbols::T_ID);
+	if (*current_token == Symbols::T_OPEN_BRACK){
+		GetNextToken();
+		Expression();
+		CheckSequence(Symbols::T_CLOSE_BRACK);
 	}
 }
 
@@ -93,9 +118,11 @@ void Parser::Left_Value_or_Oper_Call(){
 
 		}
 	}
+	else if (*current_token == Symbols::T_OPEN_PAR){
+		Opt_Expr();
+	}
 	else{
-		err<<"Expected Identifier ";
-		DisplayErr(err);
+		Operation_Call();
 	}
 }
 
@@ -212,7 +239,7 @@ void Parser::Block(){
 }
 
 void Parser::Final(){
-	if (*current_token == Symbols::T_ID){
+	if (NextIsAnyOfThese(Symbols::T_ID, Symbols::T_WRITE, Symbols::T_WRTLN, Symbols::T_READ)){
 		Left_Value_or_Oper_Call();
 	}
 	else if (NextIsAnyOfThese(Symbols::T_NUM, Symbols::T_TRUE, Symbols::T_FALSE)){
@@ -227,6 +254,7 @@ void Parser::Final(){
 		Expression();
 	}
 	else if (*current_token == Symbols::T_OPEN_PAR){
+		GetNextToken();
 		Expression();
 		CheckSequence(Symbols::T_CLOSE_PAR);
 	}

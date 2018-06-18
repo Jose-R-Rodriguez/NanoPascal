@@ -37,9 +37,8 @@ namespace Symbols{
 	extern Symbol Pre_Empty;
 	extern Terminal
 				T_EOF, T_EOE, T_PROG, T_BEGIN, T_END, T_STR_LIT, T_OP_ADD, T_OP_SUB,
-				T_EPSILON, T_ID, T_NUM, T_WRTLN, T_OPEN_PAR, T_CLOSE_PAR, T_COMMA,
-				T_COLON,
-				T_OPEN_CURLY,
+				T_EPSILON, T_ID, T_NUM, T_WRTLN, T_OPEN_PAR, T_CLOSE_PAR, T_COMMA, T_COLON,
+				T_OPEN_CURLY, T_CONTINUE, 
 				T_CLOSE_CURLY,
 				T_EQUALS,
 				T_OP_MULT,

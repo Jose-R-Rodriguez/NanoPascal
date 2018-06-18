@@ -183,6 +183,8 @@ Symbol& Lexer::ResolveToken(){
 			case '>':
 				if(PeekAndCompare('='))
 					return Symbols::T_GT_OR_ET;
+				else if (PeekAndCompare('>'))
+					return Symbols::T_OP_SHR;
 				RETURN_TOKEN(Symbols::T_GREATER_THAN);
 			case ':':
 				if (PeekAndCompare('='))
@@ -193,6 +195,8 @@ Symbol& Lexer::ResolveToken(){
 					return Symbols::T_LT_OR_ET;
 				else if(PeekAndCompare('>'))
 					return Symbols::T_NOT_ET;
+				else if (PeekAndCompare('<'))
+					return Symbols::T_OP_SHL;
 				RETURN_TOKEN(Symbols::T_LESS_THAN);
 			case '{':
 				if(PeekAndCompare('$')){

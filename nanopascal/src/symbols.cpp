@@ -74,7 +74,8 @@ namespace Symbols{
 				T_WRITE(153, "Write Keyword"),
 				T_REPEAT(154, "Repeat Keyword"),
 				T_TO(155, "To Keyword"),T_DOT_SET(158, "Dot Set"),
-				T_OPEN_BRACK(156, "Open Bracket"), T_CLOSE_BRACK(157, "Close Bracket");
+				T_OPEN_BRACK(156, "Open Bracket"), T_CLOSE_BRACK(157, "Close Bracket"),
+				T_CONTINUE(158, "Continue Keyword");
 	NonTerminal
 				NT_VAR(256, "placeholder");
 	PreprocessorSymbols

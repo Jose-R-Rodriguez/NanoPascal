@@ -35,7 +35,28 @@ private:
 	void Argument_decl_List();
 	void Id_List_B();
 	void Statement_List();
+	void Statement();
 	void Assign();
 	void Operation_Call();
+	void Left_Value_or_Oper_Call();
+	void Expression();
+	void Term0();
+	void Term1();
+	void Term2();
+	void Final();
+	void Tier1_Loop();
+	void Tier2_Loop();
+	void Tier3_Loop();
+	void Tier4_Loop();
+	void Constant();
+	void BoolConstant();
+	void Block();
+	void Assign_or_Oper_Call();
+	void Opt_Expr();
+	void Opt_Args();
+	void Args();
+	void Args_List();
+	void Expression_List();
+	void Expression_B();
 };
 #endif

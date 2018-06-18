@@ -74,7 +74,8 @@ private:
 		{"repeat",		Symbols::T_REPEAT},
 		{"break",			Symbols::T_BREAK},
 		{"to",				Symbols::T_TO},
-		{"of",				Symbols::T_OF}
+		{"of",				Symbols::T_OF},
+		{"continue",	Symbols::T_CONTINUE}
 	};
 };
 #endif

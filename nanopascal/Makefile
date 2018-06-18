@@ -3,7 +3,8 @@ SRC_DIR= ./src
 BIN_DIR= ./bin
 HDR_DIR= $(SRC_DIR)/headers
 BIN= bin
-GCC= g++
+#GCC= g++
+GCC= clang++
 GCC-FLAGS= -std=c++11 -g -c -I $(HDR_DIR) -o
 TEST-FILES_DIR= ./test
 
@@ -30,7 +31,7 @@ $(BIN_DIR)/main.o :$(SRC_DIR)/main.cpp
 debug:
 
 run: $(OUTPUT)
-	$(OUTPUT) ./test/ArithmeticOperators.pas
+	$(OUTPUT) ./test/NestedDirectives.pas
 
 run_all: $(OUTPUT)
 	$(OUTPUT) $(TEST-FILES) -d random hola adios

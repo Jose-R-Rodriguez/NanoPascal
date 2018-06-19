@@ -35,7 +35,9 @@ void Lexer::ConsumeSequence(std::function <bool(char)> func, bool unget= false) 
 	} while(func(current_char));
 	if (unget){
 		input.unget();
-		current_column--;
+		if (current_column <= 1){
+			current_row--;
+		}
 	}
 }
 void Lexer::PrintActiveDirectives(){
@@ -63,14 +65,14 @@ Symbol& Lexer::DoIfDef(){
 	if (next_token.id == Symbols::T_ID.id){
 		if (ExistsInIterable(declared_directives, lexeme)){
 			//name, has an else, activated by else
-			directive_structure add_to_stack= {lexeme, false, false};
+			directive_structure add_to_stack{lexeme, false, false};
 			active_directives.push(add_to_stack);
 			return ResolveToken();
 		}
 		else{
 			//rewrite this block
 			//name, has an else, activated by else
-			directive_structure add_to_stack= {lexeme, false, true};
+			directive_structure add_to_stack{lexeme, false, true};
 			active_directives.push(add_to_stack);
 			bool found_else;
 			int current_stack_size, orig_stack_size= active_directives.size();

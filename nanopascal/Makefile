@@ -31,7 +31,7 @@ $(BIN_DIR)/main.o :$(SRC_DIR)/main.cpp
 debug:
 
 run: $(OUTPUT)
-	$(OUTPUT) ./test/ArithmeticOperators.pas
+	$(OUTPUT) ./test.pas
 
 run_all: $(OUTPUT)
 	$(OUTPUT) $(TEST-FILES) -d random hola adios

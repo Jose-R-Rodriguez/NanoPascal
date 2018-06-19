@@ -214,6 +214,11 @@ Symbol& Lexer::ResolveToken(){
 				}
 			RETURN_TOKEN(Symbols::T_OPEN_PAR);
 			case '\'':
+				lexeme+= current_char;
+				current_char= GetNextChar();
+				if (PeekAndCompare('\'')){
+					return Symbols::T_CHAR_CONSTANT;
+				}
 				ConsumeSequence(
 					[this](char character){return (character == '\'') ? (lexeme+= character), false: true;}
 				);

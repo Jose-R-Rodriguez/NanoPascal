@@ -268,7 +268,7 @@ void Parser::Final(){
 }
 
 void Parser::Constant(){
-	if (NextIsAnyOfThese(Symbols::T_NUM)){
+	if (NextIsAnyOfThese(Symbols::T_NUM, Symbols::T_CHAR_CONSTANT)){
 		GetNextToken();
 	}
 	else{

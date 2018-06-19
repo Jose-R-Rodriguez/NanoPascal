@@ -34,7 +34,8 @@ private:
 	std::string lexeme;
 	std::stack<directive_structure> active_directives;
 	std::set<std::string> declared_directives{
-		{"nanopascal"}
+		{"nanopascal"},
+		{"random"}
 	};
 	std::map <std::string, Symbol&> Keywords{
 		{"program", 	Symbols::T_PROG},

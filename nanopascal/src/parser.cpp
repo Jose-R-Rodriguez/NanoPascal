@@ -117,8 +117,7 @@ void Parser::Left_Value_or_Oper_Call(){
 			CheckSequence(Symbols::T_CLOSE_BRACK);
 		}
 		else if (*current_token == Symbols::T_OPEN_PAR){
-			std::cout<<"Found a function call"<<std::endl;
-
+			Opt_Expr();
 		}
 	}
 	else if (*current_token == Symbols::T_OPEN_PAR){
@@ -171,8 +170,9 @@ void Parser::Assign_or_Oper_Call(){
 
 void Parser::Opt_Expr(){
 	CheckSequence(Symbols::T_OPEN_PAR);
-	if (*current_token != Symbols::T_CLOSE_PAR)
+	if (*current_token != Symbols::T_CLOSE_PAR){
 		Expression_List();
+	}
 	CheckSequence(Symbols::T_CLOSE_PAR);
 }
 

@@ -2,6 +2,7 @@
 #define PARSER_HPP
 #include "lexer.hpp"
 #include "common.hpp"
+#include "ast.hpp"
 class Parser{
 public:
 	Parser(Lexer&);
@@ -48,8 +49,8 @@ private:
 	void Tier2_Loop();
 	void Tier3_Loop();
 	void Tier4_Loop();
-	void Constant();
-	void BoolConstant();
+	Node_Pointer Constant();
+	Node_Pointer BoolConstant();
 	void Block();
 	void Assign_or_Oper_Call();
 	void Opt_Expr();

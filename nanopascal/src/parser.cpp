@@ -217,7 +217,7 @@ void Parser::Args(){
 	if (*current_token == Symbols::T_STR_LIT){
 		GetNextToken();
 	}
-	else{
+	else if (*current_token != Symbols::T_CLOSE_PAR){
 		Expression();
 	}
 	Args_List();
@@ -267,22 +267,29 @@ void Parser::Final(){
 	}
 }
 
-void Parser::Constant(){
+Node_Pointer Parser::Constant(){
+	Node_Pointer NP;
 	if (NextIsAnyOfThese(Symbols::T_NUM, Symbols::T_CHAR_CONSTANT)){
+		NP= CreatePrimitiveNode(*current_token, mylexer.GetCurrentLexeme());
 		GetNextToken();
 	}
 	else{
 		BoolConstant();
 	}
+	return NP;
 }
 
-void Parser::BoolConstant(){
-	if (NextIsAnyOfThese(Symbols::T_TRUE, Symbols::T_FALSE))
+Node_Pointer Parser::BoolConstant(){
+	Node_Pointer NP;
+	if (NextIsAnyOfThese(Symbols::T_TRUE, Symbols::T_FALSE)){
+		NP= CreatePrimitiveNode(*current_token, mylexer.GetCurrentLexeme());
 		GetNextToken();
+	}
 	else{
-		err<<"Expected Boolean";
+		err<<"Expected Constant";
 		DisplayErr(err);
 	}
+	return NP;
 }
 
 void Parser::Tier1_Loop(){

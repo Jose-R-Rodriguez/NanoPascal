@@ -1,11 +1,11 @@
-OUTPUT= $(BIN_DIR)/sample
+OUTPUT= $(BIN_DIR)/nanopascal
 SRC_DIR= ./src
 BIN_DIR= ./bin
 HDR_DIR= $(SRC_DIR)/headers
 BIN= bin
 #GCC= g++
 GCC= clang++
-GCC-FLAGS= -std=c++11 -g -c -I $(HDR_DIR) -o
+GCC-FLAGS= -std=c++14 -g -c -I $(HDR_DIR) -o
 TEST-FILES_DIR= ./test
 
 TEST-FILES= $(wildcard $(TEST-FILES_DIR)/*.pas)

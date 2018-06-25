@@ -39,15 +39,19 @@ NP_List Parser::Start(){
 	NP_List pointers_list, temp;
 	temp= CheckSequence(Symbols::T_PROG, Symbols::T_ID, Symbols::T_EOE);
 	pointers_list.push_back(std::make_unique<StartNode>(temp[0]));
-	Variables();
+	auto t= Variables();
+	if (t)
+		pointers_list.push_back(std::move(t));
 	Operations_List();
 	CheckSequence(Symbols::T_BEGIN);
+	pointers_list.push_back(std::make_unique<BeginBodyNode>(""));
 	Statement_List();
 	CheckSequence(Symbols::T_END, Symbols::T_END_OF_PROG);
+	pointers_list.push_back(std::make_unique<EndBodyNode>(""));
 	return pointers_list;
 }
 
-void Parser::Operations_List(){
+Node_Pointer Parser::Operations_List(){
 	while (NextIsAnyOfThese(Symbols::T_FUNCTION, Symbols::T_PROCEDURE)){
 		//if its a function then get next token and call function header otherwise get token and call procedure header
 		(*current_token==Symbols::T_FUNCTION) ?
@@ -348,11 +352,15 @@ void Parser::Function_Header(){
 	CheckSequence(Symbols::T_EOE);
 }
 
-void Parser::DataType(){
-	if (!(PrimitiveType() || ArrayType())){
+Node_Pointer Parser::DataType(){
+	auto t1= PrimitiveType();
+	auto t2= ArrayType();
+	if (!(t1  || t2)){
 		err<<"Expected Primitive or Array type ";
 		DisplayErr(err);
 	}
+	//(t1) ? std::cout<<t1->toString()<<std::endl : std::cout<<t2->toString()<<std::endl;
+	return (t1) ? std::move(t1) : std::move(t2);
 }
 
 void Parser::Procedure_Header(){
@@ -395,53 +403,82 @@ void Parser::Id_List_B(){
 	}
 }
 
-void Parser::Variables(){
+Node_Pointer Parser::Variables(){
 	if (*current_token == Symbols::T_VAR){
 		GetNextToken();
+		std::unique_ptr<VariablesNode> variables_ptr= std::make_unique<VariablesNode>();
+		variables_ptr->child_list.clear();
 		do {
-			CheckSequence(Symbols::T_ID);
-			Variable_decls();
+			auto temp= CheckSequence(Symbols::T_ID);
+				variables_ptr->child_list.push_back(std::move(temp[0]));
+			auto temp1= Variable_decls();
+			if (temp1){
+				variables_ptr->child_list.push_back(std::move(temp1));
+			}
 		} while(*current_token == Symbols::T_ID);
+		return variables_ptr;
 	}
+	else{
+		return nullptr;
+	}
+
 }
 
-void Parser::Variable_decls(){
-	Id_List();
+Node_Pointer Parser::Variable_decls(){
+	auto idlst= Id_List();
+	std::unique_ptr<VariableDeclNode> variable_decls_ptr= std::make_unique<VariableDeclNode>(idlst);
 	CheckSequence(Symbols::T_COLON);
-	DataType();
+	variable_decls_ptr->child_list.push_back(DataType());
 	CheckSequence(Symbols::T_EOE);
+	return variable_decls_ptr;
 }
 
-bool Parser::PrimitiveType(){
-	bool t= NextIsAnyOfThese(Symbols::T_INT_TYPE, Symbols::T_BOOL_TYPE, Symbols::T_CHAR_TYPE);
-	if (t)
+Node_Pointer Parser::PrimitiveType(){
+	if (NextIsAnyOfThese(Symbols::T_INT_TYPE, Symbols::T_BOOL_TYPE, Symbols::T_CHAR_TYPE)){
+		auto t= CreatePrimitiveNode(*current_token, "");
 		GetNextToken();
-	return t;
+		return t;
+	}
+	else{
+		return nullptr;
+	}
 }
 //This will freak and exit if the sequence to declare an array is improper
 //it will also freak and exit if we dont get a primitivetype
-bool Parser::ArrayType(){
-	//bool t= NextIsAnyOfThese(Symbols::T_ARRAY);
-	bool t= (*current_token == Symbols::T_ARRAY);
-	if (t){
-		CheckSequence(
+Node_Pointer Parser::ArrayType(){
+	std::unique_ptr<ArrayTypeNode> array_ptr= std::make_unique<ArrayTypeNode>();
+	array_ptr->child_list.empty();
+	if (*current_token == Symbols::T_ARRAY){
+		auto list= CheckSequence(
 			Symbols::T_ARRAY, Symbols::T_OPEN_BRACK, Symbols::T_NUM, Symbols::T_DOT_SET,
 			Symbols::T_NUM, Symbols::T_CLOSE_BRACK, Symbols::T_OF
 		);
-		if (!PrimitiveType()){
+		array_ptr->child_list.push_back(std::move(list[0]));
+		array_ptr->child_list.push_back(std::move(list[1]));
+		auto temp= PrimitiveType();
+		if (!temp){
 			err<<"Expected Primitive type ";
 			DisplayErr(err);
 		}
+		array_ptr->child_list.push_back(std::move(temp));
+		return array_ptr;
 	}
-	return t;
+	else{
+		return nullptr;
+	}
 }
 
 
-void Parser::Id_List(){
+Node_Pointer Parser::Id_List(){
+	std::unique_ptr<IdListNode> listnode_ptr= std::make_unique<IdListNode>();
+	NP_List temp_lst;
+	listnode_ptr->child_list.clear();
 	while (*current_token == Symbols::T_COMMA){
 		GetNextToken();
-		CheckSequence(Symbols::T_ID);
+		temp_lst= CheckSequence(Symbols::T_ID);
+		listnode_ptr->child_list.push_back(std::move(temp_lst[0]));
 	}
+	return listnode_ptr;
 }
 
 void Parser::Parse(){

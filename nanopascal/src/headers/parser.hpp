@@ -20,17 +20,17 @@ private:
 	template<typename First, typename ... Symbols>
 	bool NextIsAnyOfThese(First& symb, Symbols&... rest);
 
-	bool PrimitiveType();
-	bool ArrayType();
+	Node_Pointer PrimitiveType();
+	Node_Pointer ArrayType();
 
 	void DisplayErr(std::ostringstream& err);
 	void GetNextToken(){current_token= &mylexer.ResolveToken();};
 	NP_List Start();
-	void Variables();
-	void Variable_decls();
-	void Id_List();
-	void DataType();
-	void Operations_List();
+	Node_Pointer Variables();
+	Node_Pointer Variable_decls();
+	Node_Pointer Id_List();
+	Node_Pointer DataType();
+	Node_Pointer Operations_List();
 	void Function_Header();
 	void Procedure_Header();
 	void Argument_decl();

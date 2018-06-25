@@ -39,6 +39,10 @@ public:
 DEFINE_PRIMITIVE_NODE(Number, int);
 DEFINE_PRIMITIVE_NODE(Character, char);
 DEFINE_PRIMITIVE_NODE(Boolean, bool);
+DEFINE_PRIMITIVE_NODE(Program, std::string);
+DEFINE_PRIMITIVE_NODE(Id, std::string);
+DEFINE_PRIMITIVE_NODE(Semicolon, char);
+DEFINE_N_ARYNODE(Start);
 DEFINE_N_ARYNODE(Add);
 DEFINE_N_ARYNODE(Subtract);
 
@@ -59,8 +63,18 @@ Node_Pointer CreatePrimitiveNode(Symbol& symb ,T value){
 		else
 			return Node_Pointer(new BooleanNode(false));
 	}
+	else if (symb == Symbols::T_PROG){
+		return Node_Pointer(new ProgramNode(value));
+	}
+	else if (symb == Symbols::T_ID){
+		return Node_Pointer(new IdNode(value));
+	}
+	else if (symb == Symbols::T_EOE){
+		return Node_Pointer(new SemicolonNode(value[0]));
+	}
 	else{
 		err<<"Attempting to create a node which has no support yet";
+		std::cout<<value<<std::endl;
 		std::cout<<err.str()<<std::endl;
 		exit(1);
 	}

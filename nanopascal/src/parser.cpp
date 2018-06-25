@@ -3,14 +3,28 @@ Parser::Parser(Lexer& mylexer) : mylexer(mylexer), current_token(&mylexer.Resolv
 	Parse();
 }
 
-template<typename First, typename ... Symbols>
+/*template<typename First, typename ... Symbols>
 void Parser::CheckSequence(First& symb, Symbols&... rest){
 	if (symb != *current_token){
 		err<<"Expected:"<<std::endl<<symb<<std::endl;
 		DisplayErr(err);
 	}
+	CreatePrimitiveNode(*current_token, mylexer.GetCurrentLexeme());
 	GetNextToken();
 	CheckSequence(rest...);
+}*/
+template<typename ... Symbols>
+NP_List Parser::CheckSequence(Symbols&... args){
+	NP_List sequence_pointers;
+	for (auto& symb : {args...}){
+		if (symb.id != current_token->id){
+			err<<"Expected:"<<std::endl<<symb<<std::endl;
+			DisplayErr(err);
+		}
+		sequence_pointers.push_back(CreatePrimitiveNode(*current_token, mylexer.GetCurrentLexeme()));
+		GetNextToken();
+	}
+	return sequence_pointers;
 }
 
 template<typename First, typename ... Symbols>
@@ -18,8 +32,9 @@ bool Parser::NextIsAnyOfThese(First& symb, Symbols&... rest){
 	return (symb==*current_token) || NextIsAnyOfThese(rest...);
 }
 
-void Parser::Start(){
-	CheckSequence(Symbols::T_PROG, Symbols::T_ID, Symbols::T_EOE);
+NP_List Parser::Start(){
+	NP_List pointers_list= CheckSequence(Symbols::T_PROG, Symbols::T_ID, Symbols::T_EOE);
+	std::cout<<pointers_list[0]->toString()<<std::endl;
 	Variables();
 	Operations_List();
 	CheckSequence(Symbols::T_BEGIN);

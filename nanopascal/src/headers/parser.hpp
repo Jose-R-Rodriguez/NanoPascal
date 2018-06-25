@@ -10,10 +10,11 @@ public:
 private:
 	Symbol* current_token;
 	Lexer& mylexer;
-	void CheckSequence(){}
+	/*void CheckSequence(){}
 	template<typename First, typename ... Symbols>
-	void CheckSequence(First& symb, Symbols&... rest);
-
+	void CheckSequence(First& symb, Symbols&... rest);*/
+	template<typename ... Symbols>
+	NP_List CheckSequence(Symbols&... args);
 	template <typename Symbols>
 	bool NextIsAnyOfThese(Symbols& symbol){return symbol == *current_token;}
 	template<typename First, typename ... Symbols>
@@ -24,7 +25,7 @@ private:
 
 	void DisplayErr(std::ostringstream& err);
 	void GetNextToken(){current_token= &mylexer.ResolveToken();};
-	void Start();
+	NP_List Start();
 	void Variables();
 	void Variable_decls();
 	void Id_List();

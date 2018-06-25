@@ -246,6 +246,54 @@ std::string AssignNode::toString(){
 	std::string output= "";
 	output+= child_list[0]->toString();
 	output+= ":= ";
-	//output+= child_list[1]->toString();
+	output+= child_list[1]->toString();
+	return output + ";";
+}
+
+std::string EqualsNode::toString(){
+	std::string output= "";
+	output+= child_list[0]->toString();
+	output+= " = ";
+	output+= child_list[1]->toString();
+	return output;
+}
+
+std::string GreaterThanNode::toString(){
+	std::string output= "";
+	output+= child_list[0]->toString();
+	output+= " > ";
+	output+= child_list[1]->toString();
+	return output;
+}
+
+std::string LessThanNode::toString(){
+	std::string output= "";
+	output+= child_list[0]->toString();
+	output+= " < ";
+	output+= child_list[1]->toString();
+	return output;
+}
+
+std::string LT_ETNode::toString(){
+	std::string output= "";
+	output+= child_list[0]->toString();
+	output+= " <= ";
+	output+= child_list[1]->toString();
+	return output;
+}
+
+std::string GT_ETNode::toString(){
+	std::string output= "";
+	output+= child_list[0]->toString();
+	output+= " >= ";
+	output+= child_list[1]->toString();
+	return output;
+}
+
+std::string NotEqualsNode::toString(){
+	std::string output= "";
+	output+= child_list[0]->toString();
+	output+= " != ";
+	output+= child_list[1]->toString();
 	return output;
 }

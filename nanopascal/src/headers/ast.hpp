@@ -13,14 +13,11 @@
 		}\
 		template<typename Args>\
 		name##Node(Args&& arg){\
-			std::cout<<"----"<<arg->toString()<<std::endl;\
 			child_list.push_back(std::move(arg));\
 		}\
 		template<typename First, typename ... Args>\
-		name##Node(First&& f, Args&& ... args){\
-			std::cout<<"THIS IS ONE"<<std::endl;\
-			child_list.push_back(std::move(f));\
-			name##Node(args...);\
+		name##Node(First&& f, Args&& ... args) : name##Node(args...){\
+			child_list.push_front(std::move(f));\
 		}\
 		std::string toString();\
 	};
@@ -80,6 +77,12 @@ DEFINE_N_ARYNODE(Tier3_Loop);
 DEFINE_N_ARYNODE(Tier4_Loop);
 DEFINE_N_ARYNODE(Final);
 DEFINE_N_ARYNODE(Assign);
+DEFINE_N_ARYNODE(Equals);
+DEFINE_N_ARYNODE(NotEquals);
+DEFINE_N_ARYNODE(LT_ET);
+DEFINE_N_ARYNODE(GT_ET);
+DEFINE_N_ARYNODE(GreaterThan);
+DEFINE_N_ARYNODE(LessThan);
 
 
 class AST{

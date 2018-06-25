@@ -11,5 +11,6 @@ PROCEDURE myprocedure(x: integer; mk: boolean);begin end;
 procedure testprocedure; begin end;
 begin
 	testprocedure;
-	x:= 4;
+	x:= 4=3;
+	lmao:= 4 <= 5;
 end.

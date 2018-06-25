@@ -46,10 +46,6 @@ private:
 	Node_Pointer Term1();
 	Node_Pointer Term2();
 	Node_Pointer Final();
-	Node_Pointer Tier1_Loop();
-	Node_Pointer Tier2_Loop();
-	Node_Pointer Tier3_Loop();
-	Node_Pointer Tier4_Loop();
 	Node_Pointer Constant();
 	Node_Pointer BoolConstant();
 	void Block();

@@ -7,12 +7,17 @@
 #define DEFINE_N_ARYNODE(name)\
 	class name##Node : public N_aryNode{\
 	public:\
-		template<typename ... Args>\
-		name##Node(Args ... args){\
-			for (auto x : {args...}){\
-				child_list.push_back(x);\
-			}\
+		template<typename Args>\
+		name##Node(Args&& arg){\
+			child_list.push_back(std::move(arg));\
 		}\
+		template<typename First, typename ... Args>\
+		name##Node(First&& f, Args&& ... args){\
+			std::cout<<"THIS IS ONE"<<std::endl;\
+			child_list.push_back(f);\
+			name##Node(args...);\
+		}\
+		std::string toString();\
 	};
 #define DEFINE_PRIMITIVE_NODE(name, type)\
 	class name##Node : public Node{\
@@ -31,7 +36,7 @@ public:
 using Node_Pointer= std::unique_ptr<Node>;
 using NP_List= std::deque<Node_Pointer>;
 
-class N_aryNode : Node{
+class N_aryNode : public Node{
 public:
 	NP_List child_list;
 };
@@ -39,12 +44,17 @@ public:
 DEFINE_PRIMITIVE_NODE(Number, int);
 DEFINE_PRIMITIVE_NODE(Character, char);
 DEFINE_PRIMITIVE_NODE(Boolean, bool);
-DEFINE_PRIMITIVE_NODE(Program, std::string);
 DEFINE_PRIMITIVE_NODE(Id, std::string);
-DEFINE_PRIMITIVE_NODE(Semicolon, char);
 DEFINE_N_ARYNODE(Start);
 DEFINE_N_ARYNODE(Add);
 DEFINE_N_ARYNODE(Subtract);
+
+class AST{
+public:
+	AST(NP_List&& pointer_list) : pointer_list(std::move(pointer_list)) {};
+	void Print();
+	NP_List pointer_list;
+};
 
 /*
 Non specialized template to help me create unique pointers to simple node types
@@ -63,20 +73,12 @@ Node_Pointer CreatePrimitiveNode(Symbol& symb ,T value){
 		else
 			return Node_Pointer(new BooleanNode(false));
 	}
-	else if (symb == Symbols::T_PROG){
-		return Node_Pointer(new ProgramNode(value));
-	}
-	else if (symb == Symbols::T_ID){
+	else if(symb == Symbols::T_ID){
 		return Node_Pointer(new IdNode(value));
 	}
-	else if (symb == Symbols::T_EOE){
-		return Node_Pointer(new SemicolonNode(value[0]));
-	}
 	else{
-		err<<"Attempting to create a node which has no support yet";
-		std::cout<<value<<std::endl;
-		std::cout<<err.str()<<std::endl;
-		exit(1);
+		//std::cout<<"No need to save: "<<value<<std::endl;
+		return nullptr;
 	}
 }
 #endif

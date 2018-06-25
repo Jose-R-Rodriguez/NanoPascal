@@ -1,1 +1,2 @@
 program test;
+begin end.

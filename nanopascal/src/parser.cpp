@@ -47,7 +47,10 @@ NP_List Parser::Start(){
 		pointers_list.push_back(std::move(t1));
 	CheckSequence(Symbols::T_BEGIN);
 	pointers_list.push_back(std::make_unique<BeginBodyNode>(""));
-	Statement_List();
+	auto t2= Statement_List();
+	if (t2){
+		pointers_list.push_back(std::move(t2));
+	}
 	CheckSequence(Symbols::T_END, Symbols::T_END_OF_PROG);
 	pointers_list.push_back(std::make_unique<EndBodyNode>(""));
 	return pointers_list;
@@ -69,9 +72,11 @@ Node_Pointer Parser::Operations_List(){
 			}
 			CheckSequence(Symbols::T_BEGIN);
 			oper_lst_ptr->child_list.push_back(std::make_unique<BeginBodyNode>(""));
-			Statement_List();
+			auto stmt_lst_ptr= Statement_List();
+			if (stmt_lst_ptr)
+				oper_lst_ptr->child_list.push_back(std::move(stmt_lst_ptr));
 			CheckSequence(Symbols::T_END, Symbols::T_EOE);
-			oper_lst_ptr->child_list.push_back(std::make_unique<EndBodyNode>(""));
+			oper_lst_ptr->child_list.push_back(std::make_unique<EndOperationNode>(""));
 		}
 		return oper_lst_ptr;
 	}
@@ -80,15 +85,24 @@ Node_Pointer Parser::Operations_List(){
 	}
 }
 
-void Parser::Statement_List(){
-	while (NextIsAnyOfThese(Symbols::T_ID, Symbols::T_IF, Symbols::T_WHILE, Symbols::T_REPEAT, Symbols::T_FOR, Symbols::T_BREAK, Symbols::T_CONTINUE, Symbols::T_WRITE, Symbols::T_WRTLN, Symbols::T_READ)){
-		Statement();
+Node_Pointer Parser::Statement_List(){
+	if (NextIsAnyOfThese(Symbols::T_ID, Symbols::T_IF, Symbols::T_WHILE, Symbols::T_REPEAT, Symbols::T_FOR, Symbols::T_BREAK, Symbols::T_CONTINUE, Symbols::T_WRITE, Symbols::T_WRTLN, Symbols::T_READ)){
+		std::unique_ptr<StatementListNode> stmt_lst_ptr= std::make_unique<StatementListNode>();
+		stmt_lst_ptr->child_list.clear();
+		while (NextIsAnyOfThese(Symbols::T_ID, Symbols::T_IF, Symbols::T_WHILE, Symbols::T_REPEAT, Symbols::T_FOR, Symbols::T_BREAK, Symbols::T_CONTINUE, Symbols::T_WRITE, Symbols::T_WRTLN, Symbols::T_READ)){
+			stmt_lst_ptr->child_list.push_back(Statement());
+		}
+		return stmt_lst_ptr;
 	}
+	else
+		return nullptr;
 }
 
-void Parser::Statement(){
+Node_Pointer Parser::Statement(){
+	std::unique_ptr<StatementNode> stmt_ptr= std::make_unique<StatementNode>();
+	stmt_ptr->child_list.clear();
 	if (NextIsAnyOfThese(Symbols::T_ID, Symbols::T_WRITE, Symbols::T_WRTLN, Symbols::T_READ)){
-		Assign_or_Oper_Call();
+		stmt_ptr->child_list.push_back(Assign_or_Oper_Call());
 		CheckSequence(Symbols::T_EOE);
 	}
 	else if (*current_token == Symbols::T_IF){
@@ -132,6 +146,7 @@ void Parser::Statement(){
 		err<<"Expected Assignment or statement call ";
 		DisplayErr(err);
 	}
+	return stmt_ptr;
 }
 
 void Parser::Assign(){
@@ -169,30 +184,57 @@ void Parser::Left_Value_or_Oper_Call(){
 	}
 }
 
-void Parser::Expression(){
-	Term0();
-	Tier4_Loop();
-}
-void Parser::Term0(){
-	Term1();
-	Tier3_Loop();
-}
-void Parser::Term1(){
-	Term2();
-	Tier2_Loop();
+Node_Pointer Parser::Expression(){
+	std::unique_ptr<ExpressionNode> expr_ptr= std::make_unique<ExpressionNode>();
+	expr_ptr->child_list.clear();
+	expr_ptr->child_list.push_back(Term0());
+	auto t= Tier4_Loop();
+	if (t)
+		expr_ptr->child_list.push_back(std::move(t));
+	return expr_ptr;
 }
 
-void Parser::Term2(){
-	Final();
-	Tier1_Loop();
+Node_Pointer Parser::Term0(){
+	std::unique_ptr<Term0Node> trm_ptr= std::make_unique<Term0Node>();
+	trm_ptr->child_list.clear();
+	trm_ptr->child_list.push_back(Term1());
+	auto t= Tier3_Loop();
+	if (t)
+		trm_ptr->child_list.push_back(std::move(t));
+	return trm_ptr;
 }
 
-void Parser::Assign_or_Oper_Call(){
+Node_Pointer Parser::Term1(){
+	std::unique_ptr<Term1Node> trm_ptr= std::make_unique<Term1Node>();
+	trm_ptr->child_list.clear();
+	trm_ptr->child_list.push_back(Term2());
+	auto t= Tier2_Loop();
+	if (t)
+		trm_ptr->child_list.push_back(std::move(t));
+	return trm_ptr;
+}
+
+Node_Pointer Parser::Term2(){
+	std::unique_ptr<Term2Node> trm_ptr= std::make_unique<Term2Node>();
+	trm_ptr->child_list.clear();
+	trm_ptr->child_list.push_back(Final());
+	auto t= Tier1_Loop();
+	if (t)
+		trm_ptr->child_list.push_back(std::move(t));
+	return trm_ptr;
+}
+
+Node_Pointer Parser::Assign_or_Oper_Call(){
+	std::unique_ptr<AssignOperNode> assign_oper_ptr= std::make_unique<AssignOperNode>();
+	assign_oper_ptr->child_list.clear();
 	if (*current_token == Symbols::T_ID){
+		auto t= CreatePrimitiveNode(*current_token, mylexer.GetCurrentLexeme());
+		assign_oper_ptr->child_list.push_back(std::move(t));
 		GetNextToken();
 		if (*current_token == Symbols::T_EQUALS){
 			GetNextToken();
-			Expression();
+			std::unique_ptr<AssignNode> assign_ptr= std::make_unique<AssignNode>(std::move(assign_oper_ptr->child_list[0]), Expression());
+			return assign_ptr;
 		}
 		else if(*current_token == Symbols::T_OPEN_BRACK){
 			GetNextToken();
@@ -207,6 +249,7 @@ void Parser::Assign_or_Oper_Call(){
 	else{
 		Operation_Call();
 	}
+	return assign_oper_ptr;
 }
 
 void Parser::Opt_Expr(){
@@ -282,12 +325,14 @@ void Parser::Block(){
 	}
 }
 
-void Parser::Final(){
+Node_Pointer Parser::Final(){
+	std::unique_ptr<FinalNode> final_ptr= std::make_unique<FinalNode>();
+	final_ptr->child_list.clear();
 	if (NextIsAnyOfThese(Symbols::T_ID, Symbols::T_WRITE, Symbols::T_WRTLN, Symbols::T_READ)){
 		Left_Value_or_Oper_Call();
 	}
 	else if (NextIsAnyOfThese(Symbols::T_NUM, Symbols::T_TRUE, Symbols::T_FALSE)){
-		Constant();
+		final_ptr->child_list.push_back(Constant());
 	}
 	else if (*current_token == Symbols::T_OP_SUB){
 		GetNextToken();
@@ -306,6 +351,7 @@ void Parser::Final(){
 		err<<"Expected final ";
 		DisplayErr(err);
 	}
+	return final_ptr;
 }
 
 Node_Pointer Parser::Constant(){
@@ -315,7 +361,7 @@ Node_Pointer Parser::Constant(){
 		GetNextToken();
 	}
 	else{
-		BoolConstant();
+		NP= BoolConstant();
 	}
 	return NP;
 }
@@ -333,32 +379,60 @@ Node_Pointer Parser::BoolConstant(){
 	return NP;
 }
 
-void Parser::Tier1_Loop(){
-	while (NextIsAnyOfThese(Symbols::T_OP_NOT)){
-		GetNextToken();
-		Final();
+Node_Pointer Parser::Tier1_Loop(){
+	std::unique_ptr<Tier1_LoopNode> tier1_ptr= std::make_unique<Tier1_LoopNode>();
+	tier1_ptr->child_list.clear();
+	if (NextIsAnyOfThese(Symbols::T_OP_NOT)){
+		while (NextIsAnyOfThese(Symbols::T_OP_NOT)){
+			GetNextToken();
+			Final();
+		}
+		return tier1_ptr;
 	}
+	else
+		return nullptr;
 }
 
-void Parser::Tier2_Loop(){
-	while (NextIsAnyOfThese(Symbols::T_OP_MULT, Symbols::T_OP_DIV, Symbols::T_OP_MOD, Symbols::T_OP_AND, Symbols::T_OP_SHL, Symbols::T_OP_SHR)){
-		GetNextToken();
-		Term2();
+Node_Pointer Parser::Tier2_Loop(){
+	std::unique_ptr<Tier2_LoopNode> tier2_ptr= std::make_unique<Tier2_LoopNode>();
+	tier2_ptr->child_list.clear();
+	if (NextIsAnyOfThese(Symbols::T_OP_MULT, Symbols::T_OP_DIV, Symbols::T_OP_MOD, Symbols::T_OP_AND, Symbols::T_OP_SHL, Symbols::T_OP_SHR)){
+		while (NextIsAnyOfThese(Symbols::T_OP_MULT, Symbols::T_OP_DIV, Symbols::T_OP_MOD, Symbols::T_OP_AND, Symbols::T_OP_SHL, Symbols::T_OP_SHR)){
+			GetNextToken();
+			Term2();
+		}
+		return tier2_ptr;
 	}
+	else
+		return nullptr;
 }
 
-void Parser::Tier3_Loop(){
-	while (NextIsAnyOfThese(Symbols::T_OP_ADD, Symbols::T_OP_SUB, Symbols::T_OP_OR, Symbols::T_OP_XOR)){
-		GetNextToken();
-		Term1();
+Node_Pointer Parser::Tier3_Loop(){
+	std::unique_ptr<Tier3_LoopNode> tier3_ptr= std::make_unique<Tier3_LoopNode>();
+	tier3_ptr->child_list.clear();
+	if (NextIsAnyOfThese(Symbols::T_OP_ADD, Symbols::T_OP_SUB, Symbols::T_OP_OR, Symbols::T_OP_XOR)){
+		while (NextIsAnyOfThese(Symbols::T_OP_ADD, Symbols::T_OP_SUB, Symbols::T_OP_OR, Symbols::T_OP_XOR)){
+			GetNextToken();
+			Term1();
+		}
+		return tier3_ptr;
 	}
+	else
+		return nullptr;
 }
 
-void Parser::Tier4_Loop(){
-	while (NextIsAnyOfThese(Symbols::T_EQUALS_TO, Symbols::T_NOT_ET, Symbols::T_LESS_THAN, Symbols::T_GREATER_THAN, Symbols::T_LT_OR_ET, Symbols::T_GT_OR_ET)){
-		GetNextToken();
-		Term0();
+Node_Pointer Parser::Tier4_Loop(){
+	std::unique_ptr<Tier4_LoopNode> tier4_ptr= std::make_unique<Tier4_LoopNode>();
+	tier4_ptr->child_list.clear();
+	if (NextIsAnyOfThese(Symbols::T_EQUALS_TO, Symbols::T_NOT_ET, Symbols::T_LESS_THAN, Symbols::T_GREATER_THAN, Symbols::T_LT_OR_ET, Symbols::T_GT_OR_ET)){
+		while (NextIsAnyOfThese(Symbols::T_EQUALS_TO, Symbols::T_NOT_ET, Symbols::T_LESS_THAN, Symbols::T_GREATER_THAN, Symbols::T_LT_OR_ET, Symbols::T_GT_OR_ET)){
+			GetNextToken();
+			Term0();
+		}
+		return tier4_ptr;
 	}
+	else
+		return nullptr;
 }
 
 Node_Pointer Parser::Function_Header(){

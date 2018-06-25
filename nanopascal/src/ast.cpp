@@ -84,6 +84,9 @@ std::string BeginBodyNode::toString(){
 std::string EndBodyNode::toString(){
 	return "End.\n";
 }
+std::string EndOperationNode::toString(){
+	return "End;\n";
+}
 
 std::string OperationsListNode::toString(){
 	std::string output= "";
@@ -157,4 +160,92 @@ std::string ProcedureNode::toString(){
 		output+=";";
 	}
 	return output+"\n";
+}
+
+std::string StatementListNode::toString(){
+	std::string output= "";
+	for (const auto& x : child_list){
+		output+= x->toString();
+	}
+	return output;
+}
+
+std::string StatementNode::toString(){
+	std::string output= "";
+	for (const auto& x : child_list){
+		output+= x->toString();
+	}
+	return output+"\n";
+}
+
+std::string AssignOperNode::toString(){
+	std::string output= "";
+	for (const auto& x : child_list){
+		output+= x->toString();
+	}
+	return output;
+}
+
+std::string ExpressionNode::toString(){
+	std::string output= "";
+	for (int x= 0 ; x<child_list.size() ; x++){
+		output+= child_list[x]->toString();
+	}
+	return output;
+}
+
+std::string Term0Node::toString(){
+	std::string output= "";
+	for (int x= 0 ; x<child_list.size() ; x++){
+		output+= child_list[x]->toString();
+	}
+	return output;
+}
+
+std::string Term1Node::toString(){
+	std::string output= "";
+	for (int x= 0 ; x<child_list.size() ; x++){
+		output+= child_list[x]->toString();
+	}
+	return output;
+}
+
+std::string Term2Node::toString(){
+	std::string output= "";
+	for (int x= 0 ; x<child_list.size() ; x++){
+		output+= child_list[x]->toString();
+	}
+	return output;
+}
+
+std::string FinalNode::toString(){
+	std::string output= "";
+	for (int x= 0 ; x<child_list.size() ; x++){
+		output+= child_list[x]->toString();
+	}
+	return output;
+}
+
+std::string Tier1_LoopNode::toString(){
+	return "";
+}
+
+std::string Tier2_LoopNode::toString(){
+	return "";
+}
+
+std::string Tier3_LoopNode::toString(){
+	return "";
+}
+
+std::string Tier4_LoopNode::toString(){
+	return "";
+}
+
+std::string AssignNode::toString(){
+	std::string output= "";
+	output+= child_list[0]->toString();
+	output+= ":= ";
+	//output+= child_list[1]->toString();
+	return output;
 }

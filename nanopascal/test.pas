@@ -9,4 +9,7 @@ FUNCTION FunctionName(t:integer): boolean; var testingvariable: integer; begin e
 function mysecondfunction : boolean; begin end;
 PROCEDURE myprocedure(x: integer; mk: boolean);begin end;
 procedure testprocedure; begin end;
-begin end.
+begin
+	testprocedure;
+	x:= 4;
+end.

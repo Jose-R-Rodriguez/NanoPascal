@@ -13,12 +13,13 @@
 		}\
 		template<typename Args>\
 		name##Node(Args&& arg){\
+			std::cout<<"----"<<arg->toString()<<std::endl;\
 			child_list.push_back(std::move(arg));\
 		}\
 		template<typename First, typename ... Args>\
 		name##Node(First&& f, Args&& ... args){\
 			std::cout<<"THIS IS ONE"<<std::endl;\
-			child_list.push_back(f);\
+			child_list.push_back(std::move(f));\
 			name##Node(args...);\
 		}\
 		std::string toString();\
@@ -54,6 +55,10 @@ DEFINE_PRIMITIVE_NODE(BooleanType, std::string);
 DEFINE_PRIMITIVE_NODE(CharacterType, std::string);
 DEFINE_PRIMITIVE_NODE(BeginBody, std::string);
 DEFINE_PRIMITIVE_NODE(EndBody,std::string);
+DEFINE_PRIMITIVE_NODE(EndOperation, std::string);
+DEFINE_N_ARYNODE(Statement);
+DEFINE_N_ARYNODE(AssignOper);
+DEFINE_N_ARYNODE(StatementList);
 DEFINE_N_ARYNODE(Start);
 DEFINE_N_ARYNODE(Variables);
 DEFINE_N_ARYNODE(IdList);
@@ -65,6 +70,18 @@ DEFINE_N_ARYNODE(Procedure);
 DEFINE_N_ARYNODE(IdListB);
 DEFINE_N_ARYNODE(ArgumentDeclList);
 DEFINE_N_ARYNODE(ArgumentDecl);
+DEFINE_N_ARYNODE(Expression);
+DEFINE_N_ARYNODE(Term0);
+DEFINE_N_ARYNODE(Term1);
+DEFINE_N_ARYNODE(Term2);
+DEFINE_N_ARYNODE(Tier1_Loop);
+DEFINE_N_ARYNODE(Tier2_Loop);
+DEFINE_N_ARYNODE(Tier3_Loop);
+DEFINE_N_ARYNODE(Tier4_Loop);
+DEFINE_N_ARYNODE(Final);
+DEFINE_N_ARYNODE(Assign);
+
+
 class AST{
 public:
 	AST(NP_List&& pointer_list) : pointer_list(std::move(pointer_list)) {};

@@ -61,11 +61,17 @@ Node_Pointer Parser::Operations_List(){
 			//if its a function then get next token and call function header otherwise get token and call procedure header
 			Node_Pointer temp;
 			(*current_token==Symbols::T_FUNCTION) ?
-			(GetNextToken(), Function_Header()) : (GetNextToken(), Procedure_Header());
-			Variables();
+			(GetNextToken(), temp= Function_Header()) : (GetNextToken(), temp= Procedure_Header());
+			oper_lst_ptr->child_list.push_back(std::move(temp));
+			auto v_temp_ptr= Variables();
+			if (v_temp_ptr){
+				oper_lst_ptr->child_list.push_back(std::move(v_temp_ptr));
+			}
 			CheckSequence(Symbols::T_BEGIN);
+			oper_lst_ptr->child_list.push_back(std::make_unique<BeginBodyNode>(""));
 			Statement_List();
 			CheckSequence(Symbols::T_END, Symbols::T_EOE);
+			oper_lst_ptr->child_list.push_back(std::make_unique<EndBodyNode>(""));
 		}
 		return oper_lst_ptr;
 	}
@@ -376,7 +382,6 @@ Node_Pointer Parser::DataType(){
 		err<<"Expected Primitive or Array type ";
 		DisplayErr(err);
 	}
-	//(t1) ? std::cout<<t1->toString()<<std::endl : std::cout<<t2->toString()<<std::endl;
 	return (t1) ? std::move(t1) : std::move(t2);
 }
 

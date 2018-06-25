@@ -45,19 +45,19 @@ std::string VariableDeclNode::toString(){
 	for (const auto& x : child_list){
 		output+= x->toString();
 	}
-	return output+"\n";
+	return output+";\n";
 }
 
 std::string IntegerTypeNode::toString(){
-	return "Integer;";
+	return "Integer";
 }
 
 std::string CharacterTypeNode::toString(){
-	return "char;";
+	return "char";
 }
 
 std::string BooleanTypeNode::toString(){
-	return "Boolean;";
+	return "Boolean";
 }
 
 std::string ArrayTypeNode::toString(){
@@ -82,29 +82,79 @@ std::string BeginBodyNode::toString(){
 }
 
 std::string EndBodyNode::toString(){
-	return "End.";
+	return "End.\n";
 }
 
 std::string OperationsListNode::toString(){
-	return "";
+	std::string output= "";
+	for (int x= 0 ; x<child_list.size() ; x++){
+		output+= child_list[x]->toString();
+	}
+	return output;
 }
 
 std::string FunctionNode::toString(){
-	return "";
+	std::string output= "function ";
+	output+= child_list[0]->toString();
+	if (child_list[2]){
+		output+= "(";
+		output+= child_list[1]->toString();
+		output+= ") : ";
+		output+= child_list[2]->toString();
+		output+= ";";
+	}
+	else{
+		output+= ":";
+		output+= child_list[1]->toString();
+		output+= ";";
+	}
+	return output+"\n";
 }
 
 std::string IdListBNode::toString(){
-	return "";
+	std::string output= "";
+	for (int x= 0; x<child_list.size() ; x++){
+		output+= child_list[x]->toString();
+		x++;
+		output+= ":";
+		output+= child_list[x]->toString();
+		output+=";";
+	}
+	output.pop_back();
+	return output;
 }
 
 std::string ArgumentDeclListNode::toString(){
-	return "";
+	std::string output= "";
+	char temp= ':';
+	output+= child_list[0]->toString();
+	output+= ":";
+	output+= child_list[1]->toString();
+	if (child_list[2]){
+		output+= ";";
+		output+= child_list[2]->toString();
+	}
+	return output;
 }
 
 std::string ArgumentDeclNode::toString(){
-	return "";
+	std::string output= "";
+	for (const auto& x : child_list){
+		output+= x->toString();
+	}
+	return output;
 }
 
 std::string ProcedureNode::toString(){
-	return "";
+	std::string output= "procedure ";
+	output+= child_list[0]->toString();
+	if (child_list[1]){
+		output+= "(";
+		output+= child_list[1]->toString();
+		output+= ");";
+	}
+	else{
+		output+=";";
+	}
+	return output+"\n";
 }

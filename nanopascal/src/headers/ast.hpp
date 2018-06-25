@@ -60,6 +60,11 @@ DEFINE_N_ARYNODE(IdList);
 DEFINE_N_ARYNODE(VariableDecl);
 DEFINE_N_ARYNODE(ArrayType);
 DEFINE_N_ARYNODE(OperationsList);
+DEFINE_N_ARYNODE(Function);
+DEFINE_N_ARYNODE(Procedure);
+DEFINE_N_ARYNODE(IdListB);
+DEFINE_N_ARYNODE(ArgumentDeclList);
+DEFINE_N_ARYNODE(ArgumentDecl);
 class AST{
 public:
 	AST(NP_List&& pointer_list) : pointer_list(std::move(pointer_list)) {};

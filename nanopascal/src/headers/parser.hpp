@@ -31,11 +31,11 @@ private:
 	Node_Pointer Id_List();
 	Node_Pointer DataType();
 	Node_Pointer Operations_List();
-	void Function_Header();
-	void Procedure_Header();
-	void Argument_decl();
-	void Argument_decl_List();
-	void Id_List_B();
+	Node_Pointer Function_Header();
+	Node_Pointer Procedure_Header();
+	Node_Pointer Argument_decl();
+	Node_Pointer Argument_decl_List();
+	Node_Pointer Id_List_B();
 	void Statement_List();
 	void Statement();
 	void Assign();

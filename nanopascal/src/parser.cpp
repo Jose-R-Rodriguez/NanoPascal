@@ -59,6 +59,7 @@ Node_Pointer Parser::Operations_List(){
 	if (NextIsAnyOfThese(Symbols::T_FUNCTION, Symbols::T_PROCEDURE)){
 		while (NextIsAnyOfThese(Symbols::T_FUNCTION, Symbols::T_PROCEDURE)){
 			//if its a function then get next token and call function header otherwise get token and call procedure header
+			Node_Pointer temp;
 			(*current_token==Symbols::T_FUNCTION) ?
 			(GetNextToken(), Function_Header()) : (GetNextToken(), Procedure_Header());
 			Variables();
@@ -354,12 +355,18 @@ void Parser::Tier4_Loop(){
 	}
 }
 
-void Parser::Function_Header(){
-	CheckSequence(Symbols::T_ID);
-	Argument_decl();
+Node_Pointer Parser::Function_Header(){
+	std::unique_ptr<FunctionNode> function_ptr= std::make_unique<FunctionNode>();
+	function_ptr->child_list.clear();
+	auto tmp_lst= CheckSequence(Symbols::T_ID);
+	function_ptr->child_list.push_back(std::move(tmp_lst[0]));
+	auto tmp_ptr= Argument_decl();
+	if (tmp_ptr)
+		function_ptr->child_list.push_back(std::move(tmp_ptr));
 	CheckSequence(Symbols::T_COLON);
-	DataType();
+	function_ptr->child_list.push_back(DataType());
 	CheckSequence(Symbols::T_EOE);
+	return function_ptr;
 }
 
 Node_Pointer Parser::DataType(){
@@ -373,44 +380,71 @@ Node_Pointer Parser::DataType(){
 	return (t1) ? std::move(t1) : std::move(t2);
 }
 
-void Parser::Procedure_Header(){
-	CheckSequence(Symbols::T_ID);
-	Argument_decl();
+Node_Pointer Parser::Procedure_Header(){
+	std::unique_ptr<ProcedureNode> proc_ptr= std::make_unique<ProcedureNode>();
+	proc_ptr->child_list.clear();
+	auto tmp_lst= CheckSequence(Symbols::T_ID);
+	proc_ptr->child_list.push_back(std::move(tmp_lst[0]));
+	proc_ptr->child_list.push_back(Argument_decl());
 	CheckSequence(Symbols::T_EOE);
+	return proc_ptr;
 }
 
-void Parser::Argument_decl(){
+Node_Pointer Parser::Argument_decl(){
+	std::unique_ptr<ArgumentDeclNode> argmt_decl_ptr= std::make_unique<ArgumentDeclNode>();
+	argmt_decl_ptr->child_list.clear();
 	if (*current_token == Symbols::T_OPEN_PAR){
 		GetNextToken();
-		Argument_decl_List();
+		auto t= Argument_decl_List();
+		if (t)
+			argmt_decl_ptr->child_list.push_back(std::move(t));
 		CheckSequence(Symbols::T_CLOSE_PAR);
+		return argmt_decl_ptr;
+	}
+	else{
+		return nullptr;
 	}
 }
 
-void Parser::Argument_decl_List(){
+Node_Pointer Parser::Argument_decl_List(){
+	std::unique_ptr<ArgumentDeclListNode> argmt_decl_lst_ptr= std::make_unique<ArgumentDeclListNode>();
+	argmt_decl_lst_ptr->child_list.clear();
 	if (NextIsAnyOfThese(Symbols::T_VAR, Symbols::T_ID)){
 		if (*current_token==Symbols::T_VAR)
 			GetNextToken();
-		CheckSequence(Symbols::T_ID, Symbols::T_COLON);
-		DataType();
-		Id_List_B();
+		auto t= CheckSequence(Symbols::T_ID, Symbols::T_COLON);
+		argmt_decl_lst_ptr->child_list.push_back(std::move(t[0]));
+		argmt_decl_lst_ptr->child_list.push_back(DataType());
+		argmt_decl_lst_ptr->child_list.push_back(Id_List_B());
+		return argmt_decl_lst_ptr;
+	}
+	else{
+		return nullptr;
 	}
 }
 
-void Parser::Id_List_B(){
-	while (*current_token == Symbols::T_EOE){
-		GetNextToken();
-		if (NextIsAnyOfThese(Symbols::T_VAR, Symbols::T_ID)){
-			if (*current_token==Symbols::T_VAR)
-				GetNextToken();
-			CheckSequence(Symbols::T_ID, Symbols::T_COLON);
-			DataType();
+Node_Pointer Parser::Id_List_B(){
+	std::unique_ptr<IdListBNode> listb_ptr= std::make_unique<IdListBNode>();
+	listb_ptr->child_list.clear();
+	if (*current_token == Symbols::T_EOE){
+		while (*current_token == Symbols::T_EOE){
+			GetNextToken();
+			if (NextIsAnyOfThese(Symbols::T_VAR, Symbols::T_ID)){
+				if (*current_token==Symbols::T_VAR)
+					GetNextToken();
+				auto t= CheckSequence(Symbols::T_ID, Symbols::T_COLON);
+				listb_ptr->child_list.push_back(std::move(t[0]));
+				listb_ptr->child_list.push_back(DataType());
+			}
+			else{
+				err<<"Expected var or identifier ";
+				DisplayErr(err);
+			}
 		}
-		else{
-			err<<"Expected var or identifier ";
-			DisplayErr(err);
-		}
+		return listb_ptr;
 	}
+	else
+		return nullptr;
 }
 
 Node_Pointer Parser::Variables(){

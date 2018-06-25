@@ -88,3 +88,23 @@ std::string EndBodyNode::toString(){
 std::string OperationsListNode::toString(){
 	return "";
 }
+
+std::string FunctionNode::toString(){
+	return "";
+}
+
+std::string IdListBNode::toString(){
+	return "";
+}
+
+std::string ArgumentDeclListNode::toString(){
+	return "";
+}
+
+std::string ArgumentDeclNode::toString(){
+	return "";
+}
+
+std::string ProcedureNode::toString(){
+	return "";
+}

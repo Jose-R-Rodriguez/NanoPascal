@@ -84,3 +84,7 @@ std::string BeginBodyNode::toString(){
 std::string EndBodyNode::toString(){
 	return "End.";
 }
+
+std::string OperationsListNode::toString(){
+	return "";
+}

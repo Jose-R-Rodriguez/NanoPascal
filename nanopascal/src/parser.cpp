@@ -42,7 +42,9 @@ NP_List Parser::Start(){
 	auto t= Variables();
 	if (t)
 		pointers_list.push_back(std::move(t));
-	Operations_List();
+	auto t1= Operations_List();
+	if (t1)
+		pointers_list.push_back(std::move(t1));
 	CheckSequence(Symbols::T_BEGIN);
 	pointers_list.push_back(std::make_unique<BeginBodyNode>(""));
 	Statement_List();
@@ -52,14 +54,22 @@ NP_List Parser::Start(){
 }
 
 Node_Pointer Parser::Operations_List(){
-	while (NextIsAnyOfThese(Symbols::T_FUNCTION, Symbols::T_PROCEDURE)){
-		//if its a function then get next token and call function header otherwise get token and call procedure header
-		(*current_token==Symbols::T_FUNCTION) ?
-		(GetNextToken(), Function_Header()) : (GetNextToken(), Procedure_Header());
-		Variables();
-		CheckSequence(Symbols::T_BEGIN);
-		Statement_List();
-		CheckSequence(Symbols::T_END, Symbols::T_EOE);
+	std::unique_ptr<OperationsListNode> oper_lst_ptr= std::make_unique<OperationsListNode>();
+	oper_lst_ptr->child_list.clear();
+	if (NextIsAnyOfThese(Symbols::T_FUNCTION, Symbols::T_PROCEDURE)){
+		while (NextIsAnyOfThese(Symbols::T_FUNCTION, Symbols::T_PROCEDURE)){
+			//if its a function then get next token and call function header otherwise get token and call procedure header
+			(*current_token==Symbols::T_FUNCTION) ?
+			(GetNextToken(), Function_Header()) : (GetNextToken(), Procedure_Header());
+			Variables();
+			CheckSequence(Symbols::T_BEGIN);
+			Statement_List();
+			CheckSequence(Symbols::T_END, Symbols::T_EOE);
+		}
+		return oper_lst_ptr;
+	}
+	else{
+		return nullptr;
 	}
 }
 

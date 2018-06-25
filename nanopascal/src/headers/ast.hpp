@@ -59,7 +59,7 @@ DEFINE_N_ARYNODE(Variables);
 DEFINE_N_ARYNODE(IdList);
 DEFINE_N_ARYNODE(VariableDecl);
 DEFINE_N_ARYNODE(ArrayType);
-
+DEFINE_N_ARYNODE(OperationsList);
 class AST{
 public:
 	AST(NP_List&& pointer_list) : pointer_list(std::move(pointer_list)) {};

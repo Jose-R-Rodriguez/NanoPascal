@@ -13,4 +13,7 @@ begin
 	testprocedure;
 	x:= 4=3;
 	lmao:= 4 <= 5;
+	x := 4 + 2;
+	x:= 5 and 4 or 4;
+	x:= not 0;
 end.

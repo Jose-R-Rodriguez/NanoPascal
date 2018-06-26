@@ -214,34 +214,64 @@ Node_Pointer Parser::Expression(){
 }
 
 Node_Pointer Parser::Term0(){
-	std::unique_ptr<Term0Node> trm_ptr= std::make_unique<Term0Node>();
-	trm_ptr->child_list.clear();
-	trm_ptr->child_list.push_back(Term1());
+	Node_Pointer trm_ptr= Term1();
 	while (NextIsAnyOfThese(Symbols::T_OP_ADD, Symbols::T_OP_SUB, Symbols::T_OP_OR, Symbols::T_OP_XOR)){
+		auto& current_symb= *current_token;
 		GetNextToken();
-		Term1();
+		Node_Pointer trm_ptr2= Term1();
+		if (current_symb == Symbols::T_OP_ADD){
+			trm_ptr= std::make_unique<AddNode>(trm_ptr, trm_ptr2);
+		}
+		else if (current_symb == Symbols::T_OP_SUB){
+			trm_ptr= std::make_unique<SubNode>(trm_ptr, trm_ptr2);
+		}
+		else if (current_symb == Symbols::T_OP_OR){
+			trm_ptr= std::make_unique<OrNode>(trm_ptr, trm_ptr2);
+		}
+		else if (current_symb == Symbols::T_OP_XOR){
+			trm_ptr= std::make_unique<XorNode>(trm_ptr, trm_ptr2);
+		}
 	}
 	return trm_ptr;
 }
 
 Node_Pointer Parser::Term1(){
-	std::unique_ptr<Term1Node> trm_ptr= std::make_unique<Term1Node>();
-	trm_ptr->child_list.clear();
-	trm_ptr->child_list.push_back(Term2());
+	Node_Pointer trm_ptr= Term2();
 	while (NextIsAnyOfThese(Symbols::T_OP_MULT, Symbols::T_OP_DIV, Symbols::T_OP_MOD, Symbols::T_OP_AND, Symbols::T_OP_SHL, Symbols::T_OP_SHR)){
+		auto& current_symb= *current_token;
 		GetNextToken();
-		Term2();
+		Node_Pointer trm_ptr2= Term2();
+		if (current_symb == Symbols::T_OP_MULT){
+			trm_ptr= std::make_unique<MultNode>(trm_ptr, trm_ptr2);
+		}
+		else if (current_symb == Symbols::T_OP_DIV){
+			trm_ptr= std::make_unique<DivNode>(trm_ptr, trm_ptr2);
+		}
+		else if (current_symb == Symbols::T_OP_MOD){
+			trm_ptr= std::make_unique<ModNode>(trm_ptr, trm_ptr2);
+		}
+		else if (current_symb == Symbols::T_OP_AND){
+			trm_ptr= std::make_unique<AndNode>(trm_ptr, trm_ptr2);
+		}
+		else if (current_symb == Symbols::T_OP_SHL){
+			trm_ptr= std::make_unique<ShiftLeftNode>(trm_ptr, trm_ptr2);
+		}
+		else if (current_symb == Symbols::T_OP_SHR){
+			trm_ptr= std::make_unique<ShiftRightNode>(trm_ptr, trm_ptr2);
+		}
 	}
 	return trm_ptr;
 }
 
 Node_Pointer Parser::Term2(){
-	std::unique_ptr<Term2Node> trm_ptr= std::make_unique<Term2Node>();
-	trm_ptr->child_list.clear();
-	trm_ptr->child_list.push_back(Final());
+	Node_Pointer trm_ptr= Final();
 	while (NextIsAnyOfThese(Symbols::T_OP_NOT)){
+		auto& current_symb= *current_token;
 		GetNextToken();
-		Final();
+		Node_Pointer trm_ptr2= Final();
+		if (current_symb == Symbols::T_OP_NOT){
+			trm_ptr= std::make_unique<NotNode>(trm_ptr, trm_ptr2);
+		}
 	}
 	return trm_ptr;
 }
@@ -363,11 +393,11 @@ Node_Pointer Parser::Final(){
 	}
 	else if (*current_token == Symbols::T_OP_NOT){
 		GetNextToken();
-		Expression();
+		final_ptr->child_list.push_back(std::make_unique<NotNode>(Expression()));
 	}
 	else if (*current_token == Symbols::T_OPEN_PAR){
 		GetNextToken();
-		Expression();
+		final_ptr->child_list.push_back(Expression());
 		CheckSequence(Symbols::T_CLOSE_PAR);
 	}
 	else{

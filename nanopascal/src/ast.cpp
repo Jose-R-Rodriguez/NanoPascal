@@ -297,3 +297,97 @@ std::string NotEqualsNode::toString(){
 	output+= child_list[1]->toString();
 	return output;
 }
+
+std::string XorNode::toString(){
+	std::string output= "";
+	output+= child_list[0]->toString();
+	output+= " xor ";
+	output+= child_list[1]->toString();
+	return output;
+}
+
+std::string OrNode::toString(){
+	std::string output= "";
+	output+= child_list[0]->toString();
+	output+= " or ";
+	output+= child_list[1]->toString();
+	return output;
+}
+
+std::string AddNode::toString(){
+	std::string output= "";
+	output+= child_list[0]->toString();
+	output+= " + ";
+	output+= child_list[1]->toString();
+	return output;
+}
+
+std::string SubNode::toString(){
+	std::string output= "";
+	output+= child_list[0]->toString();
+	output+= " - ";
+	output+= child_list[1]->toString();
+	return output;
+}
+
+std::string ModNode::toString(){
+	std::string output= "";
+	output+= child_list[0]->toString();
+	output+= " % ";
+	output+= child_list[1]->toString();
+	return output;
+}
+
+std::string MultNode::toString(){
+	std::string output= "";
+	output+= child_list[0]->toString();
+	output+= " - ";
+	output+= child_list[1]->toString();
+	return output;
+}
+
+std::string DivNode::toString(){
+	std::string output= "";
+	output+= child_list[0]->toString();
+	output+= " / ";
+	output+= child_list[1]->toString();
+	return output;
+}
+
+std::string ShiftLeftNode::toString(){
+	std::string output= "";
+	output+= child_list[0]->toString();
+	output+= " << ";
+	output+= child_list[1]->toString();
+	return output;
+}
+
+std::string ShiftRightNode::toString(){
+	std::string output= "";
+	output+= child_list[0]->toString();
+	output+= " >> ";
+	output+= child_list[1]->toString();
+	return output;
+}
+
+std::string AndNode::toString(){
+	std::string output= "";
+	output+= child_list[0]->toString();
+	output+= " && ";
+	output+= child_list[1]->toString();
+	return output;
+}
+
+std::string NotNode::toString(){
+	std::string output= "";
+	if (child_list[1]){
+		output+= child_list[0]->toString();
+		output+= " ~ ";
+		output+= child_list[1]->toString();
+	}
+	else{
+		output+= "~";
+		output+= child_list[0]->toString();
+	}
+	return output;
+}

@@ -2,7 +2,7 @@ program test;
 var x, y, z : Integer;
 	c, w, x : INTEGER;
 	c, w, x : boolean;
-	c : ARRAY[20 .. 30] of char;
+	c : ARRAY[20..30] of char;
 	lmao : Char;
 function myfunction(x: INTEGER; yy: char; zz:Boolean; lm:boolean) : Integer;begin end;
 FUNCTION FunctionName(t:integer): boolean; var testingvariable: integer; begin end;
@@ -16,4 +16,14 @@ begin
 	x := 4 + 2;
 	x:= 5 and 4 or 4;
 	x:= not 0;
+	myarr[4+4]:= 44;
+	if x < 3 then y:= 4*2;
+	writeln;
+	writeln('a' ,'b' ,not xz);
+	write('l');
+	read(4*4);
+	write('4' );
+	read(2>=3);
+
+	functioncall;
 end.

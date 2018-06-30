@@ -39,7 +39,7 @@ private:
 	Node_Pointer Statement_List();
 	Node_Pointer Statement();
 	void Assign();
-	void Operation_Call();
+	Node_Pointer Operation_Call();
 	void Left_Value_or_Oper_Call();
 	Node_Pointer Expression();
 	Node_Pointer Term0();
@@ -51,9 +51,9 @@ private:
 	void Block();
 	Node_Pointer Assign_or_Oper_Call();
 	void Opt_Expr();
-	void Opt_Args();
-	void Args();
-	void Args_List();
+	Node_Pointer Opt_Args();
+	Node_Pointer Args();
+	Node_Pointer Args_List();
 	void Expression_List();
 	void Expression_B();
 	void Left_Value();

@@ -341,7 +341,7 @@ std::string ModNode::toString(){
 std::string MultNode::toString(){
 	std::string output= "";
 	output+= child_list[0]->toString();
-	output+= " - ";
+	output+= " * ";
 	output+= child_list[1]->toString();
 	return output;
 }
@@ -390,4 +390,57 @@ std::string NotNode::toString(){
 		output+= child_list[0]->toString();
 	}
 	return output;
+}
+
+std::string ArrayAssignNode::toString(){
+	std::string output= "";
+	output+= child_list[0]->toString();
+	output+= "[";
+	output+= child_list[1]->toString();
+	output+= "]:=";
+	output+= child_list[2]->toString();
+	output+= ";";
+	return output;
+}
+
+std::string WritelnNode::toString(){
+	std::string output= "writeln(";
+	for (const auto& x : child_list){
+		output+= x->toString();
+	}
+	output+= ")";
+	return output + ";";
+}
+
+std::string ArgumentsNode::toString(){
+	std::string output= "";
+	for (const auto& x : child_list){
+		output+= x->toString();
+	}
+	return output;
+}
+
+std::string ArgListNode::toString(){
+	std::string output= "";
+	for (const auto& x : child_list){
+		output+= ",";
+		output+= x->toString();
+	}
+	return output;
+}
+
+std::string WriteNode::toString(){
+	std::string output= "write(";
+	for (const auto& x : child_list){
+		output+= x->toString();
+	}
+	return output + ")";
+}
+
+std::string ReadNode::toString(){
+	std::string output= "read(";
+	for (const auto& x : child_list){
+		output+= x->toString();
+	}
+	return output + ")";
 }

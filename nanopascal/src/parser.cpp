@@ -209,7 +209,7 @@ Node_Pointer Parser::Expression(){
 			expr_ptr= std::make_unique<GT_ETNode>(expr_ptr, expr_ptr2);
 		}
 	}
-	std::cout<<expr_ptr->toString()<<std::endl;
+	//std::cout<<expr_ptr->toString()<<"WE ARE IN EXPRESSION"<<std::endl;
 	return expr_ptr;
 }
 
@@ -290,17 +290,19 @@ Node_Pointer Parser::Assign_or_Oper_Call(){
 			return assign_ptr;
 		}
 		else if(*current_token == Symbols::T_OPEN_BRACK){
+			std::unique_ptr<ArrayAssignNode> array_asgn_ptr= std::make_unique<ArrayAssignNode>(std::move(assign_oper_ptr->child_list[0]));
 			GetNextToken();
-			Expression();
+			array_asgn_ptr->child_list.push_back(Expression());
 			CheckSequence(Symbols::T_CLOSE_BRACK, Symbols::T_EQUALS);
-			Expression();
+			array_asgn_ptr->child_list.push_back(Expression());
+			return array_asgn_ptr;
 		}
 		else if (*current_token == Symbols::T_OPEN_PAR){
 			Opt_Expr();
 		}
 	}
 	else{
-		Operation_Call();
+		return Operation_Call();
 	}
 	return assign_oper_ptr;
 }
@@ -325,46 +327,85 @@ void Parser::Expression_B(){
 	}
 }
 
-void Parser::Operation_Call(){
+Node_Pointer Parser::Operation_Call(){
 	if (NextIsAnyOfThese(Symbols::T_WRITE, Symbols::T_READ)){
+		bool write= (*current_token == Symbols::T_WRITE);
 		GetNextToken();
+		Node_Pointer write_read_ptr;
 		CheckSequence(Symbols::T_OPEN_PAR);
-		Args();
+		auto t= Args();
+		if (t){
+			if (write)
+				write_read_ptr= std::make_unique<WriteNode>(std::move(t));
+			else
+				write_read_ptr= std::make_unique<ReadNode>(std::move(t));
+		}
+		else{
+			err<<"Expected arguments"<<std::endl;
+			DisplayErr(err);
+		}
 		CheckSequence(Symbols::T_CLOSE_PAR);
+		return write_read_ptr;
 	}
 	else if(*current_token == Symbols::T_WRTLN){
+		std::unique_ptr<WritelnNode> writeln_ptr= std::make_unique<WritelnNode>();
 		GetNextToken();
 		if (*current_token == Symbols::T_OPEN_PAR){
-			Opt_Args();
+			auto t= Opt_Args();
+			if (t)
+				writeln_ptr->child_list.push_back(std::move(t));
 		}
+		return writeln_ptr;
 	}
 	else{
 		err<<"Expected Function call ";
 		DisplayErr(err);
+		exit(0);
 	}
 }
 
-void Parser::Opt_Args(){
+Node_Pointer Parser::Opt_Args(){
 	CheckSequence(Symbols::T_OPEN_PAR);
-	Args();
+	auto t= Args();
 	CheckSequence(Symbols::T_CLOSE_PAR);
+	return t;
 }
 
-void Parser::Args(){
+Node_Pointer Parser::Args(){
+	std::unique_ptr<ArgumentsNode> argmt_ptr= nullptr;
 	if (*current_token == Symbols::T_STR_LIT){
+		argmt_ptr= std::make_unique<ArgumentsNode>();
+		argmt_ptr->child_list.clear();
+		auto t= CreatePrimitiveNode(*current_token, mylexer.GetCurrentLexeme());
+		argmt_ptr->child_list.push_back(std::move(t));
 		GetNextToken();
 	}
 	else if (*current_token != Symbols::T_CLOSE_PAR){
-		Expression();
+		argmt_ptr= std::make_unique<ArgumentsNode>();
+		argmt_ptr->child_list.clear();
+		argmt_ptr->child_list.push_back(Expression());
 	}
-	Args_List();
+	auto t= Args_List();
+	if (t)
+		argmt_ptr->child_list.push_back(std::move(t));
+	return argmt_ptr;
 }
 
-void Parser::Args_List(){
-	while (*current_token == Symbols::T_COMMA){
-		GetNextToken();
-		Args();
+Node_Pointer Parser::Args_List(){
+	std::unique_ptr<ArgListNode> arg_lst_ptr= std::make_unique<ArgListNode>();
+	arg_lst_ptr->child_list.clear();
+	if (*current_token == Symbols::T_COMMA){
+		while (*current_token == Symbols::T_COMMA){
+			GetNextToken();
+			auto t= Args();
+			if (t)
+				arg_lst_ptr->child_list.push_back(std::move(t));
+		}
 	}
+	else{
+		return nullptr;
+	}
+	return arg_lst_ptr;
 }
 
 void Parser::Block(){
@@ -384,7 +425,7 @@ Node_Pointer Parser::Final(){
 	if (NextIsAnyOfThese(Symbols::T_ID, Symbols::T_WRITE, Symbols::T_WRTLN, Symbols::T_READ)){
 		Left_Value_or_Oper_Call();
 	}
-	else if (NextIsAnyOfThese(Symbols::T_NUM, Symbols::T_TRUE, Symbols::T_FALSE)){
+	else if (NextIsAnyOfThese(Symbols::T_NUM, Symbols::T_TRUE, Symbols::T_FALSE, Symbols::T_CHAR_CONSTANT)){
 		final_ptr->child_list.push_back(Constant());
 	}
 	else if (*current_token == Symbols::T_OP_SUB){
@@ -587,7 +628,6 @@ Node_Pointer Parser::ArrayType(){
 		return nullptr;
 	}
 }
-
 
 Node_Pointer Parser::Id_List(){
 	std::unique_ptr<IdListNode> listnode_ptr= std::make_unique<IdListNode>();

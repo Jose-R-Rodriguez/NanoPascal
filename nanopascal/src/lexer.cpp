@@ -52,7 +52,7 @@ void Lexer::PrintActiveDirectives(){
 bool Lexer::PeekAndCompare(char t){
 	if (input.peek()==t){
 		lexeme= lexeme+current_char+ GetNextChar();
-		current_char= GetNextChar();
+		//current_char= GetNextChar();
 		return true;
 	}
 	else

@@ -15,6 +15,7 @@
 		name##Node(Args&& arg){\
 			child_list.push_back(std::move(arg));\
 		}\
+	public:\
 		template<typename First, typename ... Args>\
 		name##Node(First&& f, Args&& ... args) : name##Node(args...){\
 			child_list.push_front(std::move(f));\
@@ -94,6 +95,12 @@ DEFINE_N_ARYNODE(ShiftRight);
 DEFINE_N_ARYNODE(ShiftLeft);
 DEFINE_N_ARYNODE(And);
 DEFINE_N_ARYNODE(Not);
+DEFINE_N_ARYNODE(ArrayAssign);
+DEFINE_N_ARYNODE(Writeln);
+DEFINE_N_ARYNODE(Arguments);
+DEFINE_N_ARYNODE(ArgList);
+DEFINE_N_ARYNODE(Write);
+DEFINE_N_ARYNODE(Read);
 
 class AST{
 public:

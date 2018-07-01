@@ -6,7 +6,7 @@
 class Parser{
 public:
 	Parser(Lexer&);
-	void Parse();
+	AST Parse();
 private:
 	Symbol* current_token;
 	Lexer& mylexer;

@@ -28,6 +28,7 @@ private:
 	Symbol& DoIfDef();
 	Symbol& DoElse();
 	Symbol& DoEndIf();
+	Symbol& DoIfNDef();
 	char current_char;
 	int current_column, current_row;
 	std::ifstream& input;

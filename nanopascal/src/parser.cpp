@@ -1,6 +1,5 @@
 #include "parser.hpp"
 Parser::Parser(Lexer& mylexer) : mylexer(mylexer), current_token(&mylexer.ResolveToken()){
-	Parse();
 }
 
 /*template<typename First, typename ... Symbols>
@@ -684,18 +683,19 @@ Node_Pointer Parser::Id_List(){
 	return listnode_ptr;
 }
 
-void Parser::Parse(){
+AST Parser::Parse(){
   AST myast(Start());
   if (*current_token == Symbols::T_EOF){
     std::cout<<"Syntax ...ok"<<std::endl;
-		myast.Print();
   }
   else{
 		err<<"Extra Token\n"<<mylexer.GetCurrentLexeme();
 		DisplayError(err, mylexer.GetCurrentRow(),mylexer.GetCurrentColumn());
     std::cout<<std::endl;
   }
+	return myast;
 }
+
 void Parser::DisplayErr(std::ostringstream& err){
 	err<<"Got: "<<std::endl<<*current_token<<std::endl<<mylexer.GetCurrentLexeme();
 	DisplayError(err, mylexer.GetCurrentRow(), mylexer.GetCurrentColumn());

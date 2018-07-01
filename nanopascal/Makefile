@@ -28,6 +28,12 @@ $(BIN_DIR)/%.o :$(SRC_DIR)/%.cpp $(HDR_DIR)/%.hpp
 $(BIN_DIR)/main.o :$(SRC_DIR)/main.cpp
 	$(GCC) $(GCC-FLAGS) $@ $<
 
+$(BIN_DIR)/ast_tostring.o :$(SRC_DIR)/ast_tostring.cpp $(HDR_DIR)/ast.hpp
+	$(GCC) $(GCC-FLAGS) $@ $<
+
+$(BIN_DIR)/ast_interpret.o :$(SRC_DIR)/ast_interpret.cpp $(HDR_DIR)/ast.hpp
+	$(GCC) $(GCC-FLAGS) $@ $<
+
 debug:
 
 run: $(OUTPUT)

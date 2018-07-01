@@ -21,18 +21,34 @@
 			child_list.push_front(std::move(f));\
 		}\
 		std::string toString();\
+		Nanopascal_Types interpret();\
 	};
 #define DEFINE_PRIMITIVE_NODE(name, type)\
 	class name##Node : public Node{\
 		public:\
+		Nanopascal_Types interpret();\
 		type value;\
 		name##Node(type value) : value(value){}\
 		std::string toString();\
 	};
 
+typedef union Nanopascal_Types{
+	Nanopascal_Types(int param) : num(param){};
+	Nanopascal_Types(char param) : character(param){};
+	Nanopascal_Types(bool param) : boolean(param){};
+	Nanopascal_Types(std::string param) : str(param){}
+	Nanopascal_Types(const Nanopascal_Types& x){}
+	int num;
+	char character;
+	std::string str;
+	bool boolean;
+	~Nanopascal_Types(){}
+}Nanopascal_Types;
+
 class Node{
 public:
 	virtual std::string toString() =0;
+	virtual Nanopascal_Types interpret()=0;
 	virtual ~Node(){}
 };
 
@@ -114,6 +130,8 @@ DEFINE_N_ARYNODE(Repeat);
 class AST{
 public:
 	AST(NP_List&& pointer_list) : pointer_list(std::move(pointer_list)) {};
+	bool Interpret();
+private:
 	void Print();
 	NP_List pointer_list;
 };

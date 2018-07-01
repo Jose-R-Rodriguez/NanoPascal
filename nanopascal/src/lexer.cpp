@@ -123,6 +123,11 @@ Symbol& Lexer::DoElse(){
 	exit(1);
 }
 
+Symbol& Lexer::DoIfNDef(){
+	std::cout<<"Dude not finished yet come on "<<std::endl;
+	exit(1);
+}
+
 Symbol& Lexer::DoEndIf(){
 	active_directives.pop();
 	return ResolveToken();
@@ -138,6 +143,9 @@ Symbol& Lexer::ProcessDirective(){
 	}
 	else if(directive_action.id == Symbols::Pre_End_If.id){
 		return DoEndIf();
+	}
+	else if (directive_action.id == Symbols::Pre_If_N_Def.id){
+		return DoIfNDef();
 	}
 	else{
 		std::cout<<"Panic critical failure"<<std::endl;

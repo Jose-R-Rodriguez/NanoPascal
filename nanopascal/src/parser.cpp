@@ -298,7 +298,11 @@ Node_Pointer Parser::Assign_or_Oper_Call(){
 			return array_asgn_ptr;
 		}
 		else if (*current_token == Symbols::T_OPEN_PAR){
-			Opt_Expr();
+			auto t= Opt_Expr();
+			if (t){
+				//std::cout<<"FOund my function call"<<std::endl;
+				assign_oper_ptr->child_list.push_back(std::move(t));
+			}
 		}
 	}
 	else{
@@ -307,24 +311,36 @@ Node_Pointer Parser::Assign_or_Oper_Call(){
 	return assign_oper_ptr;
 }
 
-void Parser::Opt_Expr(){
+Node_Pointer Parser::Opt_Expr(){
+	Node_Pointer node_ptr= nullptr;
 	CheckSequence(Symbols::T_OPEN_PAR);
 	if (*current_token != Symbols::T_CLOSE_PAR){
-		Expression_List();
+		node_ptr= Expression_List();
 	}
 	CheckSequence(Symbols::T_CLOSE_PAR);
+	return node_ptr;
 }
 
-void Parser::Expression_List(){
-	Expression();
-	Expression_B();
+Node_Pointer Parser::Expression_List(){
+	std::unique_ptr<ExprListNode> expr_lst_ptr= std::make_unique<ExprListNode>();
+	expr_lst_ptr->child_list.clear();
+	expr_lst_ptr->child_list.push_back(Expression());
+	auto t= Expression_B();
+	if (t)
+		expr_lst_ptr->child_list.push_back(std::move(t));
+	return expr_lst_ptr;
 }
 
-void Parser::Expression_B(){
-	while (*current_token == Symbols::T_COMMA){
-		GetNextToken();
-		Expression();
+Node_Pointer Parser::Expression_B(){
+	std::unique_ptr<ExprListBNode> expr_lst_ptr= nullptr;
+	if (*current_token == Symbols::T_COMMA){
+		expr_lst_ptr= std::make_unique<ExprListBNode>();
+		while (*current_token == Symbols::T_COMMA){
+			GetNextToken();
+			expr_lst_ptr->child_list.push_back(Expression());
+		}
 	}
+	return expr_lst_ptr;
 }
 
 Node_Pointer Parser::Operation_Call(){

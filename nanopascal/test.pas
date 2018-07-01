@@ -24,6 +24,6 @@ begin
 	read(4*4);
 	write('4' );
 	read(2>=3);
-
+	myfunctioncall('a', '2', 33);
 	functioncall;
 end.

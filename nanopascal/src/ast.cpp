@@ -444,3 +444,20 @@ std::string ReadNode::toString(){
 	}
 	return output + ")";
 }
+
+std::string ExprListNode::toString(){
+	std::string output= "(";
+	for (const auto& x : child_list){
+		output+= x->toString();
+	}
+	return output + ")";
+}
+
+std::string ExprListBNode::toString(){
+	std::string output= "";
+	for (const auto& x : child_list){
+		output+= ",";
+		output+= x->toString();
+	}
+	return output + ")";
+}

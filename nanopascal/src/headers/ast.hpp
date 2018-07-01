@@ -101,6 +101,8 @@ DEFINE_N_ARYNODE(Arguments);
 DEFINE_N_ARYNODE(ArgList);
 DEFINE_N_ARYNODE(Write);
 DEFINE_N_ARYNODE(Read);
+DEFINE_N_ARYNODE(ExprListB);
+DEFINE_N_ARYNODE(ExprList);
 
 class AST{
 public:

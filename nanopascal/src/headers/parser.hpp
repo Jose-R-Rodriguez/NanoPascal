@@ -50,12 +50,12 @@ private:
 	Node_Pointer BoolConstant();
 	void Block();
 	Node_Pointer Assign_or_Oper_Call();
-	void Opt_Expr();
+	Node_Pointer Opt_Expr();
 	Node_Pointer Opt_Args();
 	Node_Pointer Args();
 	Node_Pointer Args_List();
-	void Expression_List();
-	void Expression_B();
+	Node_Pointer Expression_List();
+	Node_Pointer Expression_B();
 	void Left_Value();
 };
 #endif

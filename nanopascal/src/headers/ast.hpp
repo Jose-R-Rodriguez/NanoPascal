@@ -51,6 +51,7 @@ DEFINE_PRIMITIVE_NODE(Id, std::string);
 DEFINE_PRIMITIVE_NODE(IntegerType, std::string);
 DEFINE_PRIMITIVE_NODE(BooleanType, std::string);
 DEFINE_PRIMITIVE_NODE(CharacterType, std::string);
+DEFINE_PRIMITIVE_NODE(StringLiteral, std::string);
 DEFINE_PRIMITIVE_NODE(BeginBody, std::string);
 DEFINE_PRIMITIVE_NODE(EndBody,std::string);
 DEFINE_PRIMITIVE_NODE(EndOperation, std::string);
@@ -107,6 +108,8 @@ DEFINE_N_ARYNODE(LeftV_OperCall);
 DEFINE_N_ARYNODE(LeftVArray);
 DEFINE_N_ARYNODE(For);
 DEFINE_N_ARYNODE(Block);
+DEFINE_N_ARYNODE(While);
+DEFINE_N_ARYNODE(Repeat);
 
 class AST{
 public:

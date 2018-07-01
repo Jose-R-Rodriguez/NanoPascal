@@ -119,16 +119,20 @@ Node_Pointer Parser::Statement(){
 	}
 	else if (*current_token == Symbols::T_WHILE){
 		GetNextToken();
-		Expression();
+		auto t= Expression();
 		CheckSequence(Symbols::T_DO);
-		Block();
+		auto t1= Block();
+		std::unique_ptr<WhileNode> while_ptr= std::make_unique<WhileNode>(std::move(t), std::move(t1));
+		stmt_ptr->child_list.push_back(std::move(while_ptr));
 	}
 	else if (*current_token == Symbols::T_REPEAT){
 		GetNextToken();
-		Block();
+		auto t= Block();
 		CheckSequence(Symbols::T_UNTIL);
-		Expression();
+		auto t1= Expression();
 		CheckSequence(Symbols::T_EOE);
+		std::unique_ptr<RepeatNode> rpt_ptr= std::make_unique<RepeatNode>(std::move(t), std::move(t1));
+		stmt_ptr->child_list.push_back(std::move(rpt_ptr));
 	}
 	else if (*current_token == Symbols::T_FOR){
 		GetNextToken();
@@ -199,6 +203,7 @@ Node_Pointer Parser::Left_Value_or_Oper_Call(){
 	else{
 		return Operation_Call();
 	}
+	//std::cout<<"RETURNING"<<lval_opercall_ptr->toString()<<std::endl;
 	return lval_opercall_ptr;
 }
 
@@ -227,7 +232,6 @@ Node_Pointer Parser::Expression(){
 			expr_ptr= std::make_unique<GT_ETNode>(expr_ptr, expr_ptr2);
 		}
 	}
-	//std::cout<<expr_ptr->toString()<<"WE ARE IN EXPRESSION"<<std::endl;
 	return expr_ptr;
 }
 
@@ -382,6 +386,7 @@ Node_Pointer Parser::Operation_Call(){
 	}
 	else if(*current_token == Symbols::T_WRTLN){
 		std::unique_ptr<WritelnNode> writeln_ptr= std::make_unique<WritelnNode>();
+		writeln_ptr->child_list.clear();
 		GetNextToken();
 		if (*current_token == Symbols::T_OPEN_PAR){
 			auto t= Opt_Args();
@@ -409,8 +414,8 @@ Node_Pointer Parser::Args(){
 	if (*current_token == Symbols::T_STR_LIT){
 		argmt_ptr= std::make_unique<ArgumentsNode>();
 		argmt_ptr->child_list.clear();
-		auto t= CreatePrimitiveNode(*current_token, mylexer.GetCurrentLexeme());
-		argmt_ptr->child_list.push_back(std::move(t));
+		//Node_Pointer(new NumberNode(std::stoi(value)));
+		argmt_ptr->child_list.push_back(Node_Pointer(new StringLiteralNode(mylexer.GetCurrentLexeme())));
 		GetNextToken();
 	}
 	else if (*current_token != Symbols::T_CLOSE_PAR){
@@ -459,7 +464,9 @@ Node_Pointer Parser::Final(){
 	std::unique_ptr<FinalNode> final_ptr= std::make_unique<FinalNode>();
 	final_ptr->child_list.clear();
 	if (NextIsAnyOfThese(Symbols::T_ID, Symbols::T_WRITE, Symbols::T_WRTLN, Symbols::T_READ)){
-		final_ptr->child_list.push_back(Left_Value_or_Oper_Call());
+		auto t= Left_Value_or_Oper_Call();
+		final_ptr->child_list.push_back(std::move(t));
+		//final_ptr->child_list.push_back(Left_Value_or_Oper_Call());
 	}
 	else if (NextIsAnyOfThese(Symbols::T_NUM, Symbols::T_TRUE, Symbols::T_FALSE, Symbols::T_CHAR_CONSTANT)){
 		final_ptr->child_list.push_back(Constant());

@@ -1,31 +1,35 @@
-program test;
-var x, y, z : Integer;
-	c, w, x : INTEGER;
-	c, w, x : boolean;
-	c : ARRAY[20..30] of char;
-	lmao : Char;
-function myfunction(x: INTEGER; yy: char; zz:Boolean; lm:boolean) : Integer;begin end;
-FUNCTION FunctionName(t:integer): boolean; var testingvariable: integer; begin end;
-function mysecondfunction : boolean; begin end;
-PROCEDURE myprocedure(x: integer; mk: boolean);begin end;
-procedure testprocedure; begin end;
+(*******************************************
+ * File: ArithOperators.pas
+ * A test program for arithmethic operators
+ *******************************************)
+program ArithOperators;
+var x, y: Integer;
+
 begin
-	testprocedure;
-	x:= 4=3;
-	lmao:= 4 <= 5;
-	x := 4 + 2;
-	x:= 5 and 4 or 4;
-	x:= not 0;
-	myarr[4+4]:= 44;
-	if x < 3 then y:= 4*2;
-	writeln;
-	writeln('a' ,'b' ,not xz);
-	write('l');
-	read(4*4);
-	write('4' );
-	read(2>=3);
-	read('s');
-	myfunctioncall('a', '2', 33, write('1'), x);
-	functioncall;
-	for x:= 22 TO 10 do write('2');
+    {$ifdef RANDOM}
+    Randomize;
+
+    x := Random(100) + 1;
+    y := Random(100) + 1;
+    {$else}
+    x := 4567;
+    y := 33;
+    {$endif}
+
+    writeln('X = ', x, ' Y = ', y);
+		write ('X = ', x, ' Y = ', y);
+
+    writeln('Add ', x + y);
+    writeln('Sub ', x - y);
+    writeln('Mul ', x * y);
+    writeln('Div ', x div y);
+    writeln('Mod ', x mod y);
 end.
+(*** Expected output (non random) ***
+X = 4567 Y = 33
+Add 4600
+Sub 4534
+Mul 150711
+Div 138
+Mod 13
+*)

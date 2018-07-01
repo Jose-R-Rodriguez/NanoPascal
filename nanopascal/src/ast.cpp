@@ -10,6 +10,11 @@ std::string NumberNode::toString(){
 	return std::to_string(value);
 }
 
+
+std::string StringLiteralNode::toString(){
+	return value;
+}
+
 std::string CharacterNode::toString(){
 	return std::string(1, value);
 }
@@ -463,7 +468,11 @@ std::string ExprListBNode::toString(){
 }
 
 std::string LeftV_OperCallNode::toString(){
-	return "";
+	std::string output= "";
+	for (const auto& x : child_list){
+		output+= x->toString();
+	}
+	return output;
 }
 
 std::string LeftVArrayNode::toString(){
@@ -485,5 +494,21 @@ std::string ForNode::toString(){
 	output+= child_list[1]->toString();
 	output+= " do ";
 	output+= child_list[2]->toString();
+	return output;
+}
+
+std::string WhileNode::toString(){
+	std::string output= "while ";
+	output+= child_list[0]->toString();
+	output+= " do ";
+	output+= child_list[1]->toString();
+	return output;
+}
+
+std::string RepeatNode::toString(){
+	std::string output= "repeat\n";
+	output+= child_list[0]->toString();
+	output+= "until\n";
+	output+= child_list[1]->toString();
 	return output;
 }

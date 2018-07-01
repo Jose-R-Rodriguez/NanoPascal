@@ -132,12 +132,13 @@ Node_Pointer Parser::Statement(){
 	}
 	else if (*current_token == Symbols::T_FOR){
 		GetNextToken();
-		Assign();
-		Expression();
+		auto t= Assign();
 		CheckSequence(Symbols::T_TO);
-		Expression();
+		auto t1= Expression();
 		CheckSequence(Symbols::T_DO);
-		Block();
+		auto t2= Block();
+		std::unique_ptr<ForNode> for_ptr= std::make_unique<ForNode>(std::move(t), std::move(t1), std::move(t2));
+		stmt_ptr->child_list.push_back(std::move(for_ptr));
 	}
 	else if (NextIsAnyOfThese(Symbols::T_BREAK, Symbols::T_CONTINUE)){
 		GetNextToken();
@@ -149,39 +150,56 @@ Node_Pointer Parser::Statement(){
 	return stmt_ptr;
 }
 
-void Parser::Assign(){
-	Left_Value();
-	CheckSequence(Symbols::T_EQUALS_TO);
-	Expression();
+Node_Pointer Parser::Assign(){
+	std::unique_ptr<AssignNode> assign_ptr= std::make_unique<AssignNode>();
+	assign_ptr->child_list.clear();
+	assign_ptr->child_list.push_back(Left_Value());
+	CheckSequence(Symbols::T_EQUALS);
+	assign_ptr->child_list.push_back(Expression());
+	return assign_ptr;
 }
 
-void Parser::Left_Value(){
-	CheckSequence(Symbols::T_ID);
+Node_Pointer Parser::Left_Value(){
+	auto t= CheckSequence(Symbols::T_ID);
 	if (*current_token == Symbols::T_OPEN_BRACK){
 		GetNextToken();
-		Expression();
+		auto t1= Expression();
 		CheckSequence(Symbols::T_CLOSE_BRACK);
+		std::unique_ptr<ArrayAssignNode> array_asgn_ptr= std::make_unique<ArrayAssignNode>(std::move(t[0]), std::move(t1));
+		return array_asgn_ptr;
+	}
+	else{
+		return std::move(t[0]);
 	}
 }
 
-void Parser::Left_Value_or_Oper_Call(){
+Node_Pointer Parser::Left_Value_or_Oper_Call(){
+	std::unique_ptr<LeftV_OperCallNode> lval_opercall_ptr= std::make_unique<LeftV_OperCallNode>();
+	lval_opercall_ptr->child_list.clear();
 	if (*current_token == Symbols::T_ID){
+		auto t= CreatePrimitiveNode(*current_token, mylexer.GetCurrentLexeme());
+		lval_opercall_ptr->child_list.push_back(std::move(t));
 		GetNextToken();
 		if (*current_token == Symbols::T_OPEN_BRACK){
+			std::unique_ptr<LeftVArrayNode> lval_array_ptr= std::make_unique<LeftVArrayNode>(std::move(lval_opercall_ptr->child_list[0]));
 			GetNextToken();
-			Expression();
+			lval_array_ptr->child_list.push_back(Expression());
 			CheckSequence(Symbols::T_CLOSE_BRACK);
+			return lval_array_ptr;
 		}
 		else if (*current_token == Symbols::T_OPEN_PAR){
-			Opt_Expr();
+			auto t1= Opt_Expr();
+			if (t1)
+				lval_opercall_ptr->child_list.push_back(std::move(t1));
 		}
 	}
-	else if (*current_token == Symbols::T_OPEN_PAR){
+	/*else if (*current_token == Symbols::T_OPEN_PAR){
 		Opt_Expr();
-	}
+	}*/
 	else{
-		Operation_Call();
+		return Operation_Call();
 	}
+	return lval_opercall_ptr;
 }
 
 Node_Pointer Parser::Expression(){
@@ -300,7 +318,6 @@ Node_Pointer Parser::Assign_or_Oper_Call(){
 		else if (*current_token == Symbols::T_OPEN_PAR){
 			auto t= Opt_Expr();
 			if (t){
-				//std::cout<<"FOund my function call"<<std::endl;
 				assign_oper_ptr->child_list.push_back(std::move(t));
 			}
 		}
@@ -424,22 +441,25 @@ Node_Pointer Parser::Args_List(){
 	return arg_lst_ptr;
 }
 
-void Parser::Block(){
+Node_Pointer Parser::Block(){
+	std::unique_ptr<BlockNode> blck_ptr= std::make_unique<BlockNode>();
+	blck_ptr->child_list.clear();
 	if (*current_token == Symbols::T_BEGIN){
 		GetNextToken();
-		Statement_List();
+		blck_ptr->child_list.push_back(Statement_List());
 		CheckSequence(Symbols::T_END);
 	}
 	else{
-		Statement();
+		blck_ptr->child_list.push_back(Statement());
 	}
+	return blck_ptr;
 }
 
 Node_Pointer Parser::Final(){
 	std::unique_ptr<FinalNode> final_ptr= std::make_unique<FinalNode>();
 	final_ptr->child_list.clear();
 	if (NextIsAnyOfThese(Symbols::T_ID, Symbols::T_WRITE, Symbols::T_WRTLN, Symbols::T_READ)){
-		Left_Value_or_Oper_Call();
+		final_ptr->child_list.push_back(Left_Value_or_Oper_Call());
 	}
 	else if (NextIsAnyOfThese(Symbols::T_NUM, Symbols::T_TRUE, Symbols::T_FALSE, Symbols::T_CHAR_CONSTANT)){
 		final_ptr->child_list.push_back(Constant());

@@ -461,3 +461,29 @@ std::string ExprListBNode::toString(){
 	}
 	return output + ")";
 }
+
+std::string LeftV_OperCallNode::toString(){
+	return "";
+}
+
+std::string LeftVArrayNode::toString(){
+	return "";
+}
+
+std::string BlockNode::toString(){
+	std::string output= "";
+	for (const auto& x : child_list){
+		output+= x->toString();
+	}
+	return output;
+}
+
+std::string ForNode::toString(){
+	std::string output= "for ";
+	output+= child_list[0]->toString();
+	output+= " to ";
+	output+= child_list[1]->toString();
+	output+= " do ";
+	output+= child_list[2]->toString();
+	return output;
+}

@@ -5,6 +5,7 @@
 #include <functional>
 #include <variant>
 #include <unordered_map>
+#include <stdlib.h>
 #include "common.hpp"
 #define DEFINE_N_ARYNODE(name)\
 	class name##Node : public Node{\
@@ -144,6 +145,18 @@ template<typename T>
 Node_Pointer CreatePrimitiveNode(Symbol& symb ,T value){
 	if (symb == Symbols::T_NUM){
 		return Node_Pointer(new NumberNode(std::stoi(value)));
+	}
+	else if(symb == Symbols::T_HEX_NUM){
+		std::string temp= value;
+		temp= temp.substr(1, temp.size()-1);
+		int valueh= strtol(temp.c_str(), NULL, 16);
+		return Node_Pointer(new NumberNode(valueh));
+	}
+	else if(symb == Symbols::T_BINARY_NUM){
+		std::string temp= value;
+		temp= temp.substr(1, temp.size()-1);
+		int valueh= strtol(temp.c_str(), NULL, 2);
+		return Node_Pointer(new NumberNode(valueh));
 	}
 	else if(symb == Symbols::T_CHAR_CONSTANT){
 		return Node_Pointer(new CharacterNode(value[1]));

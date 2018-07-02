@@ -467,7 +467,7 @@ Node_Pointer Parser::Final(){
 		final_ptr->child_list.push_back(std::move(t));
 		//final_ptr->child_list.push_back(Left_Value_or_Oper_Call());
 	}
-	else if (NextIsAnyOfThese(Symbols::T_NUM, Symbols::T_TRUE, Symbols::T_FALSE, Symbols::T_CHAR_CONSTANT)){
+	else if (NextIsAnyOfThese(Symbols::T_NUM, Symbols::T_HEX_NUM, Symbols::T_BINARY_NUM, Symbols::T_TRUE, Symbols::T_FALSE, Symbols::T_CHAR_CONSTANT)){
 		final_ptr->child_list.push_back(Constant());
 	}
 	else if (*current_token == Symbols::T_OP_SUB){
@@ -492,7 +492,7 @@ Node_Pointer Parser::Final(){
 
 Node_Pointer Parser::Constant(){
 	Node_Pointer NP;
-	if (NextIsAnyOfThese(Symbols::T_NUM, Symbols::T_CHAR_CONSTANT)){
+	if (NextIsAnyOfThese(Symbols::T_NUM, Symbols::T_HEX_NUM, Symbols::T_BINARY_NUM, Symbols::T_CHAR_CONSTANT)){
 		NP= CreatePrimitiveNode(*current_token, mylexer.GetCurrentLexeme());
 		GetNextToken();
 	}

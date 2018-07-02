@@ -1,13 +1,14 @@
 #include "ast.hpp"
 #include <optional>
 Context global_context;
-
+void PrintNanopascalType(Nanopascal_Types param, Context& local_context);
+int GetNanopascalIntegralType(Nanopascal_Types param, Context& local_context);
 bool AST::Interpret(){
 	for (const auto& x : pointer_list){
 		//std::cout<<x->toString(Context& local_context)<<std::endl;
 		x->interpret(global_context);
 	}
-	global_context.PrintContext();
+	//global_context.PrintContext();
 	return true;
 }
 
@@ -158,10 +159,37 @@ Nanopascal_Types FinalNode::interpret(Context& local_context){
 	return x;
 }
 
+int GetNanopascalIntegralType(Nanopascal_Types param, Context& local_context){
+	switch (param.index()) {
+		case 0:
+			return std::get<int>(param);
+		case 1:
+			return std::get<char>(param);
+		case 2:
+			return std::get<bool>(param);
+		case 3:{
+			std::string temp= std::get<std::string>(param);
+			if (ExistsInIterable(local_context.variables, temp)){
+				return local_context.variables[temp];
+			}
+			else{
+				err<<"Variable name doesn't exist";
+				//DisplayError(err, 0 ,0);
+			}
+		}
+		default:
+			std::cout<<"Non integral type"<<std::endl;
+			return -99;
+	}
+}
+
 Nanopascal_Types AssignNode::interpret(Context& local_context){
-	std::cout<<"Calling assign node"<<std::endl;
-	auto variable_name= child_list[0]->interpret(local_context);
+	//std::cout<<"Calling assign node"<<std::endl;
+	auto variable_name= std::get<std::string>(child_list[0]->interpret(local_context));
 	auto expression_result= child_list[1]->interpret(local_context);
+	if (ExistsInIterable(local_context.variables, variable_name)){
+		local_context.variables[variable_name]= GetNanopascalIntegralType(expression_result, local_context);
+	}
 	if (child_list[2]){
 		std::cout<<"assign has third child wtf double check this"<<std::endl;
 		child_list[2]->interpret(local_context);
@@ -211,40 +239,50 @@ Nanopascal_Types XorNode::interpret(Context& local_context){
 }
 
 Nanopascal_Types AddNode::interpret(Context& local_context){
-	auto first= std::get<int>(child_list[0]->interpret(local_context));
-	auto second= std::get<int>(child_list[1]->interpret(local_context));
+	auto t= child_list[0]->interpret(local_context);
+	auto t1= child_list[1]->interpret(local_context);
+	int first= GetNanopascalIntegralType(t, local_context);
+	int second= GetNanopascalIntegralType(t1, local_context);
 	int result= first+second;
 	Nanopascal_Types x(result);
 	return x;
 }
 
 Nanopascal_Types SubNode::interpret(Context& local_context){
-	auto first= std::get<int>(child_list[0]->interpret(local_context));
-	auto second= std::get<int>(child_list[1]->interpret(local_context));
+	auto t= child_list[0]->interpret(local_context);
+	auto t1= child_list[1]->interpret(local_context);
+	int first= GetNanopascalIntegralType(t, local_context);
+	int second= GetNanopascalIntegralType(t1, local_context);
 	int result= first-second;
 	Nanopascal_Types x(result);
 	return x;
 }
 
 Nanopascal_Types ModNode::interpret(Context& local_context){
-	auto first= std::get<int>(child_list[0]->interpret(local_context));
-	auto second= std::get<int>(child_list[1]->interpret(local_context));
+	auto t= child_list[0]->interpret(local_context);
+	auto t1= child_list[1]->interpret(local_context);
+	int first= GetNanopascalIntegralType(t, local_context);
+	int second= GetNanopascalIntegralType(t1, local_context);
 	int result= first%second;
 	Nanopascal_Types x(result);
 	return x;
 }
 
 Nanopascal_Types MultNode::interpret(Context& local_context){
-	auto first= std::get<int>(child_list[0]->interpret(local_context));
-	auto second= std::get<int>(child_list[1]->interpret(local_context));
+	auto t= child_list[0]->interpret(local_context);
+	auto t1= child_list[1]->interpret(local_context);
+	int first= GetNanopascalIntegralType(t, local_context);
+	int second= GetNanopascalIntegralType(t1, local_context);
 	int result= first*second;
 	Nanopascal_Types x(result);
 	return x;
 }
 
 Nanopascal_Types DivNode::interpret(Context& local_context){
-	auto first= std::get<int>(child_list[0]->interpret(local_context));
-	auto second= std::get<int>(child_list[1]->interpret(local_context));
+	auto t= child_list[0]->interpret(local_context);
+	auto t1= child_list[1]->interpret(local_context);
+	int first= GetNanopascalIntegralType(t, local_context);
+	int second= GetNanopascalIntegralType(t1, local_context);
 	int result= first/second;
 	Nanopascal_Types x(result);
 	return x;
@@ -275,7 +313,7 @@ Nanopascal_Types ArrayAssignNode::interpret(Context& local_context){
 	return x;
 }
 
-void PrintNanopascalType(Nanopascal_Types param){
+void PrintNanopascalType(Nanopascal_Types param, Context& local_context){
 	switch (param.index()) {
 		case 0:
 			std::cout<<std::get<int>(param);
@@ -287,8 +325,19 @@ void PrintNanopascalType(Nanopascal_Types param){
 			std::cout<<std::get<bool>(param);
 		break;
 		case 3:
-			std::string to_print= std::get<std::string>(param);
-			std::cout<<to_print.substr(1, to_print.size()-2);;
+			std::string temp= std::get<std::string>(param);
+			if (temp[0] == '\''){
+				std::cout<<temp.substr(1, temp.size()-2);;
+			}
+			else{
+				if (ExistsInIterable(local_context.variables, temp)){
+					std::cout<<local_context.variables[temp];
+				}
+				else{
+					err<<"Variable name doesn't exist";
+					//DisplayError(err, 0 ,0);
+				}
+			}
 		break;
 	}
 }
@@ -296,7 +345,7 @@ void PrintNanopascalType(Nanopascal_Types param){
 void PrintArguments(ArgumentsNode* initial_node, Context& local_context){
 	if (initial_node->child_list[0]){
 		auto result= initial_node->child_list[0]->interpret(local_context);
-		PrintNanopascalType(result);
+		PrintNanopascalType(result, local_context);
 		if (initial_node->child_list[1]){
 			ArgListNode* arg_list= dynamic_cast<ArgListNode*>(initial_node->child_list[1].get());
 			ArgumentsNode* argmt_ptr= dynamic_cast<ArgumentsNode*>(arg_list->child_list[0].get());
@@ -350,7 +399,7 @@ Nanopascal_Types ExprListNode::interpret(Context& local_context){
 }
 
 Nanopascal_Types LeftV_OperCallNode::interpret(Context& local_context){
-	Nanopascal_Types x(1);
+	Nanopascal_Types x(child_list[0]->interpret(local_context));
 	return x;
 }
 
@@ -405,12 +454,12 @@ Nanopascal_Types NumberNode::interpret(Context& local_context){
 }
 
 Nanopascal_Types CharacterNode::interpret(Context& local_context){
-	Nanopascal_Types x(1);
+	Nanopascal_Types x(value);
 	return x;
 }
 
 Nanopascal_Types BooleanNode::interpret(Context& local_context){
-	Nanopascal_Types x(1);
+	Nanopascal_Types x(value);
 	return x;
 }
 
@@ -425,6 +474,7 @@ Nanopascal_Types BooleanTypeNode::interpret(Context& local_context){
 }
 
 Nanopascal_Types IntegerTypeNode::interpret(Context& local_context){
+	std::cout<<"Integer type node being called"<<std::endl;
 	Nanopascal_Types x(1);
 	return x;
 }

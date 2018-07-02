@@ -1,4 +1,5 @@
 #include "ast.hpp"
+#include <optional>
 bool AST::Interpret(){
 	for (const auto& x : pointer_list){
 		//std::cout<<x->toString()<<std::endl;
@@ -8,6 +9,8 @@ bool AST::Interpret(){
 }
 
 Nanopascal_Types StatementNode::interpret(){
+//	std::cout<<"interpretting a statement"<<std::endl;
+//	std::cout<<child_list[0]->toString()<<std::endl;
 	child_list[0]->interpret();
 	Nanopascal_Types x(1);
 	return x;
@@ -90,16 +93,19 @@ Nanopascal_Types ExpressionNode::interpret(){
 }
 
 Nanopascal_Types Term0Node::interpret(){
+	std::cout<<"Called term0 node "<<std::endl;
 	Nanopascal_Types x(1);
 	return x;
 }
 
 Nanopascal_Types Term1Node::interpret(){
+	std::cout<<"Called term1 node "<<std::endl;
 	Nanopascal_Types x(1);
 	return x;
 }
 
 Nanopascal_Types Term2Node::interpret(){
+	std::cout<<"Called term2 node "<<std::endl;
 	Nanopascal_Types x(1);
 	return x;
 }
@@ -125,7 +131,7 @@ Nanopascal_Types Tier4_LoopNode::interpret(){
 }
 
 Nanopascal_Types FinalNode::interpret(){
-	Nanopascal_Types x(1);
+	Nanopascal_Types x(child_list[0]->interpret());
 	return x;
 }
 
@@ -175,12 +181,18 @@ Nanopascal_Types XorNode::interpret(){
 }
 
 Nanopascal_Types AddNode::interpret(){
-	Nanopascal_Types x(1);
+	auto first= std::get<int>(child_list[0]->interpret());
+	auto second= std::get<int>(child_list[1]->interpret());
+	int result= first+second;
+	Nanopascal_Types x(result);
 	return x;
 }
 
 Nanopascal_Types SubNode::interpret(){
-	Nanopascal_Types x(1);
+	auto first= std::get<int>(child_list[0]->interpret());
+	auto second= std::get<int>(child_list[1]->interpret());
+	int result= first-second;
+	Nanopascal_Types x(result);
 	return x;
 }
 
@@ -224,25 +236,54 @@ Nanopascal_Types ArrayAssignNode::interpret(){
 	return x;
 }
 
-Nanopascal_Types WritelnNode::interpret(){
-	for (const auto& x : child_list){
-		std::cout<<"Interpretting"<<std::endl;
-		std::cout<<x->interpret().str;
+void PrintNanopascalType(Nanopascal_Types param){
+	switch (param.index()) {
+		case 0:
+			std::cout<<std::get<int>(param);
+		break;
+		case 1:
+			std::cout<<std::get<char>(param);
+		break;
+		case 2:
+			std::cout<<std::get<bool>(param);
+		break;
+		case 3:
+			std::cout<<std::get<std::string>(param);
+		break;
 	}
+}
+
+void PrintArguments(ArgumentsNode* initial_node){
+	if (initial_node->child_list[0]){
+		auto result= initial_node->child_list[0]->interpret();
+		PrintNanopascalType(result);
+		if (initial_node->child_list[1]){
+			ArgListNode* arg_list= dynamic_cast<ArgListNode*>(initial_node->child_list[1].get());
+			ArgumentsNode* argmt_ptr= dynamic_cast<ArgumentsNode*>(arg_list->child_list[0].get());
+			PrintArguments(argmt_ptr);
+		}
+	}
+}
+
+Nanopascal_Types WritelnNode::interpret(){
+	ArgumentsNode* argmt_ptr= dynamic_cast<ArgumentsNode*>(child_list[0].get());
+	PrintArguments(argmt_ptr);
+
 	std::cout<<std::endl;
 	Nanopascal_Types x(true);
 	return x;
 }
 
 Nanopascal_Types ArgumentsNode::interpret(){
-	Nanopascal_Types x(child_list[0]->interpret());
-	std::cout<<child_list[1]->toString();
+	Nanopascal_Types x(1);
+	//std::cout<<"Second in list"<<child_list[1]->toString();
 	std::cout<<"CALLED ARGUMENTS NODE"<<std::endl;
 	return x;
 }
 
 Nanopascal_Types ArgListNode::interpret(){
-	std::cout<<"CAlled arglist node"<<std::endl;
+	std::cout<<"Called arglist node"<<std::endl;
+	//std::cout<<child_list[0]->toString()<<std::endl;
 	Nanopascal_Types x(1);
 	return x;
 }
@@ -318,7 +359,7 @@ Nanopascal_Types EndOperationNode::interpret(){
 }
 
 Nanopascal_Types NumberNode::interpret(){
-	Nanopascal_Types x(1);
+	Nanopascal_Types x(value);
 	return x;
 }
 

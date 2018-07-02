@@ -3,6 +3,7 @@
 #include <deque>
 #include <memory>
 #include <functional>
+#include <variant>
 #include "common.hpp"
 #define DEFINE_N_ARYNODE(name)\
 	class name##Node : public Node{\
@@ -32,7 +33,8 @@
 		std::string toString();\
 	};
 
-typedef union Nanopascal_Types{
+using Nanopascal_Types = std::variant<int, char, bool, std::string>;
+/*typedef union Nanopascal_Types{
 	Nanopascal_Types(int param) : num(param){};
 	Nanopascal_Types(char param) : character(param){};
 	Nanopascal_Types(bool param) : boolean(param){};
@@ -43,7 +45,11 @@ typedef union Nanopascal_Types{
 	std::string str;
 	bool boolean;
 	~Nanopascal_Types(){}
-}Nanopascal_Types;
+}Nanopascal_Types;*/
+
+class Node;
+using Node_Pointer= std::unique_ptr<Node>;
+using NP_List= std::deque<Node_Pointer>;
 
 class Node{
 public:
@@ -51,9 +57,6 @@ public:
 	virtual Nanopascal_Types interpret()=0;
 	virtual ~Node(){}
 };
-
-using Node_Pointer= std::unique_ptr<Node>;
-using NP_List= std::deque<Node_Pointer>;
 
 class N_aryNode : public Node{
 public:
@@ -131,8 +134,8 @@ class AST{
 public:
 	AST(NP_List&& pointer_list) : pointer_list(std::move(pointer_list)) {};
 	bool Interpret();
-private:
 	void Print();
+private:
 	NP_List pointer_list;
 };
 

@@ -6,6 +6,7 @@ void AST::Print(){
 		std::cout<<x->toString()<<std::endl;
 	}
 }
+
 std::string NumberNode::toString(){
 	return std::to_string(value);
 }

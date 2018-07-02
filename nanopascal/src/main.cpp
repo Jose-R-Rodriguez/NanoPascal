@@ -11,6 +11,7 @@ int main(int argc, char const *argv[]) {
 	Parser myparser(mylexer);
 	AST myast= myparser.Parse();
 	myast.Interpret();
+	//myast.Print();
 	input_file.close();
 
 	return 0;

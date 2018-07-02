@@ -686,7 +686,7 @@ Node_Pointer Parser::Id_List(){
 AST Parser::Parse(){
   AST myast(Start());
   if (*current_token == Symbols::T_EOF){
-    std::cout<<"Syntax ...ok"<<std::endl;
+    //std::cout<<"Syntax ...ok"<<std::endl;
   }
   else{
 		err<<"Extra Token\n"<<mylexer.GetCurrentLexeme();

@@ -21,7 +21,7 @@ public:
 private:
 	char GetNextChar(bool);
 	bool PeekAndCompare(char t);
-	void ConsumeSequence(std::function <bool(char)> func, bool);
+	void ConsumeSequence(std::function <bool(char)> func, bool, bool);
 	Symbol& EvaluateDirective();
 	Symbol& ProcessDirective();
 	void PrintActiveDirectives();

@@ -24,14 +24,14 @@ std::string Lexer::GetCurrentLexeme(){
 	return lexeme;
 }
 
-void Lexer::ConsumeSequence(std::function <bool(char)> func, bool unget= false) {
+void Lexer::ConsumeSequence(std::function <bool(char)> func, bool unget= false, bool case_sensitive= false) {
 	do{
 		if (!current_char){
 			err<<"Unexpected End of File, sequence left open: "<<lexeme;
 			DisplayError(err, current_row, current_column);
 		}
 		lexeme+= current_char;
-		current_char= GetNextChar();
+		current_char= GetNextChar(case_sensitive);
 	} while(func(current_char));
 	if (unget){
 		input.unget();
@@ -70,7 +70,6 @@ Symbol& Lexer::DoIfDef(){
 			return ResolveToken();
 		}
 		else{
-			//rewrite this block
 			//name, has an else, activated by else
 			directive_structure add_to_stack{lexeme, false, true};
 			active_directives.push(add_to_stack);
@@ -124,8 +123,38 @@ Symbol& Lexer::DoElse(){
 }
 
 Symbol& Lexer::DoIfNDef(){
-	std::cout<<"Dude not finished yet come on "<<std::endl;
-	exit(1);
+	Symbol& next_token= ResolveToken();
+	GetNextChar();
+	if (next_token.id == Symbols::T_ID.id){
+		if (!ExistsInIterable(declared_directives, lexeme)){
+			//name, has an else, activated by else
+			directive_structure add_to_stack{lexeme, false, false};
+			active_directives.push(add_to_stack);
+			return ResolveToken();
+		}
+		else{
+			//name, has an else, activated by else
+			directive_structure add_to_stack{lexeme, false, true};
+			active_directives.push(add_to_stack);
+			bool found_else;
+			int current_stack_size, orig_stack_size= active_directives.size();
+			Symbol *temp;
+			do {
+				temp= &ResolveToken();
+				if (active_directives.empty())
+					break;
+				found_else= std::get<1>(active_directives.top());
+				current_stack_size= active_directives.size();
+			} while(!found_else || current_stack_size > orig_stack_size);
+			return *temp;
+		}
+	}
+	else{
+ 			err<<"Invalid Identifier in Directive: \""<<lexeme<<"\"";
+ 			DisplayError(err, current_row, current_column);
+ 		}
+	std::cout<<"Fatal error"<<std::endl;
+	exit(99);
 }
 
 Symbol& Lexer::DoEndIf(){
@@ -225,13 +254,13 @@ Symbol& Lexer::ResolveToken(){
 			RETURN_TOKEN(Symbols::T_OPEN_PAR);
 			case '\'':
 				lexeme+= current_char;
-				current_char= GetNextChar();
+				current_char= GetNextChar(true);
 				if (PeekAndCompare('\'')){
 					return Symbols::T_CHAR_CONSTANT;
 				}
 				ConsumeSequence(
 					[this](char character){return (character == '\'') ? (lexeme+= character), false: true;}
-				);
+				,false, true);
 				return Symbols::T_STR_LIT;
 			case '/':
 				if(PeekAndCompare('/')){

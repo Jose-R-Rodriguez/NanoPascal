@@ -7,23 +7,25 @@ bool AST::Interpret(){
 		//std::cout<<x->toString(Context& local_context)<<std::endl;
 		x->interpret(global_context);
 	}
+	global_context.PrintContext();
 	return true;
 }
 
 Nanopascal_Types StatementNode::interpret(Context& local_context){
-//	std::cout<<"interpretting a statement"<<std::endl;
-//	std::cout<<child_list[0]->toString(Context& local_context)<<std::endl;
+	//std::cout<<"Calling a statement node"<<std::endl;
 	child_list[0]->interpret(local_context);
 	Nanopascal_Types x(1);
 	return x;
 }
 
 Nanopascal_Types AssignOperNode::interpret(Context& local_context){
+	std::cout<<"Callin assign oper node"<<std::endl;
 	Nanopascal_Types x(1);
 	return x;
 }
 
 Nanopascal_Types StatementListNode::interpret(Context& local_context){
+	//std::cout<<"Calling statementlist"<<std::endl;
 	for (const auto& x : child_list){
 		x->interpret(local_context);
 	}
@@ -37,9 +39,16 @@ Nanopascal_Types StartNode::interpret(Context& local_context){
 }
 
 Nanopascal_Types VariablesNode::interpret(Context& local_context){
-	std::string variable_name= std::get<std::string>(child_list[0]->interpret(local_context));
-	local_context.variables[variable_name]= 0;
-	Nanopascal_Types x(1);
+
+	for (int x= 0 ; x<child_list.size(); x++){
+		std::string variable_name= std::get<std::string>(child_list[x]->interpret(local_context));
+		local_context.variables[variable_name]= 0;
+		x++;
+		if (child_list[x]){
+			child_list[x]->interpret(local_context);
+		}
+	}
+	Nanopascal_Types x(true);
 	return x;
 }
 
@@ -53,8 +62,12 @@ Nanopascal_Types IdListNode::interpret(Context& local_context){
 }
 
 Nanopascal_Types VariableDeclNode::interpret(Context& local_context){
-	std::cout<<"Calling variable decls"<<std::endl;
-	child_list[0]->interpret(local_context);
+	IdListNode * id_list= dynamic_cast<IdListNode*>(child_list[0].get());
+	for (const auto& id : id_list->child_list){
+		auto id_name= std::get<std::string>(id->interpret(local_context));
+		local_context.variables[id_name]= 0;
+	}
+
 	Nanopascal_Types x(1);
 	return x;
 }
@@ -146,7 +159,14 @@ Nanopascal_Types FinalNode::interpret(Context& local_context){
 }
 
 Nanopascal_Types AssignNode::interpret(Context& local_context){
-	Nanopascal_Types x(1);
+	std::cout<<"Calling assign node"<<std::endl;
+	auto variable_name= child_list[0]->interpret(local_context);
+	auto expression_result= child_list[1]->interpret(local_context);
+	if (child_list[2]){
+		std::cout<<"assign has third child wtf double check this"<<std::endl;
+		child_list[2]->interpret(local_context);
+	}
+	Nanopascal_Types x(true);
 	return x;
 }
 
@@ -267,7 +287,8 @@ void PrintNanopascalType(Nanopascal_Types param){
 			std::cout<<std::get<bool>(param);
 		break;
 		case 3:
-			std::cout<<std::get<std::string>(param);
+			std::string to_print= std::get<std::string>(param);
+			std::cout<<to_print.substr(1, to_print.size()-2);;
 		break;
 	}
 }
@@ -394,7 +415,6 @@ Nanopascal_Types BooleanNode::interpret(Context& local_context){
 }
 
 Nanopascal_Types IdNode::interpret(Context& local_context){
-	std::cout<<"calling id node"<<std::endl;
 	Nanopascal_Types x(value);
 	return x;
 }

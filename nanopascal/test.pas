@@ -25,22 +25,22 @@ begin
     y := $ff00edff;
     {$endif}
 
-    writeln('X = ', IntToHex(x, 8), ' Y = ', IntToHex(y, 8));
+    writeln('X = ', x, 8, ' Y = ', y);
 
     // And
-    writeln('x and y: ', IntToHex(x and y, 8));
+    writeln('x and y: ', x and y);
 
     // or
-    writeln('x or y: ', IntToHex(x or y, 8));
+    writeln('x or y: ', x or y);
 
     // not
-    writeln('not x: ', IntToHex(not x, 8));
+    writeln('not x: ', not x);
 
     // Shift left
-    writeln('x shl 4: ', IntToHex(x shl 4, 8));
+    writeln('x shl 4: ', x shl 4);
 
     // Shift right
-    writeln('x shr 4: ', IntToHex(x shr 4, 8));
+    writeln('x shr 4: ', x shr 4);
 end.
 (*** Expected output (non random) ***
 X = 00FF83FF Y = FF00EDFF

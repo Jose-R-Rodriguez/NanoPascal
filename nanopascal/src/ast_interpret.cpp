@@ -199,42 +199,82 @@ Nanopascal_Types AssignNode::interpret(Context& local_context){
 }
 
 Nanopascal_Types EqualsNode::interpret(Context& local_context){
-	Nanopascal_Types x(1);
+	auto t= child_list[0]->interpret(local_context);
+	auto t1= child_list[1]->interpret(local_context);
+	int first= GetNanopascalIntegralType(t, local_context);
+	int second= GetNanopascalIntegralType(t1, local_context);
+	bool result= first == second;
+	Nanopascal_Types x(result);
 	return x;
 }
 
 Nanopascal_Types NotEqualsNode::interpret(Context& local_context){
-	Nanopascal_Types x(1);
+	auto t= child_list[0]->interpret(local_context);
+	auto t1= child_list[1]->interpret(local_context);
+	int first= GetNanopascalIntegralType(t, local_context);
+	int second= GetNanopascalIntegralType(t1, local_context);
+	bool result= first != second;
+	Nanopascal_Types x(result);
 	return x;
 }
 
 Nanopascal_Types LT_ETNode::interpret(Context& local_context){
-	Nanopascal_Types x(1);
+	auto t= child_list[0]->interpret(local_context);
+	auto t1= child_list[1]->interpret(local_context);
+	int first= GetNanopascalIntegralType(t, local_context);
+	int second= GetNanopascalIntegralType(t1, local_context);
+	int result= first<=second;
+	Nanopascal_Types x(result);
 	return x;
 }
 
 Nanopascal_Types GT_ETNode::interpret(Context& local_context){
-	Nanopascal_Types x(1);
+	auto t= child_list[0]->interpret(local_context);
+	auto t1= child_list[1]->interpret(local_context);
+	int first= GetNanopascalIntegralType(t, local_context);
+	int second= GetNanopascalIntegralType(t1, local_context);
+	bool result= first>=second;
+	Nanopascal_Types x(result);
 	return x;
 }
 
 Nanopascal_Types GreaterThanNode::interpret(Context& local_context){
-	Nanopascal_Types x(1);
+	auto t= child_list[0]->interpret(local_context);
+	auto t1= child_list[1]->interpret(local_context);
+	int first= GetNanopascalIntegralType(t, local_context);
+	int second= GetNanopascalIntegralType(t1, local_context);
+	bool result= first>second;
+	Nanopascal_Types x(result);
 	return x;
 }
 
 Nanopascal_Types LessThanNode::interpret(Context& local_context){
-	Nanopascal_Types x(1);
+	auto t= child_list[0]->interpret(local_context);
+	auto t1= child_list[1]->interpret(local_context);
+	int first= GetNanopascalIntegralType(t, local_context);
+	int second= GetNanopascalIntegralType(t1, local_context);
+	bool result= first<second;
+	Nanopascal_Types x(result);
 	return x;
 }
 
 Nanopascal_Types OrNode::interpret(Context& local_context){
-	Nanopascal_Types x(1);
+	auto t= child_list[0]->interpret(local_context);
+	auto t1= child_list[1]->interpret(local_context);
+	int first= GetNanopascalIntegralType(t, local_context);
+	int second= GetNanopascalIntegralType(t1, local_context);
+	int result= first|second;
+	Nanopascal_Types x(result);
 	return x;
 }
 
 Nanopascal_Types XorNode::interpret(Context& local_context){
-	Nanopascal_Types x(1);
+	auto t= child_list[0]->interpret(local_context);
+	auto t1= child_list[1]->interpret(local_context);
+	int first= GetNanopascalIntegralType(t, local_context);
+	int second= GetNanopascalIntegralType(t1, local_context);
+	int result= first^second;
+	Nanopascal_Types x(result);
 	return x;
 }
 
@@ -289,22 +329,40 @@ Nanopascal_Types DivNode::interpret(Context& local_context){
 }
 
 Nanopascal_Types ShiftRightNode::interpret(Context& local_context){
-	Nanopascal_Types x(1);
+	auto t= child_list[0]->interpret(local_context);
+	auto t1= child_list[1]->interpret(local_context);
+	int first= GetNanopascalIntegralType(t, local_context);
+	int second= GetNanopascalIntegralType(t1, local_context);
+	int result= first>>second;
+	Nanopascal_Types x(result);
 	return x;
 }
 
 Nanopascal_Types ShiftLeftNode::interpret(Context& local_context){
-	Nanopascal_Types x(1);
+	auto t= child_list[0]->interpret(local_context);
+	auto t1= child_list[1]->interpret(local_context);
+	int first= GetNanopascalIntegralType(t, local_context);
+	int second= GetNanopascalIntegralType(t1, local_context);
+	int result= first<<second;
+	Nanopascal_Types x(result);
 	return x;
 }
 
 Nanopascal_Types AndNode::interpret(Context& local_context){
-	Nanopascal_Types x(1);
+	auto t= child_list[0]->interpret(local_context);
+	auto t1= child_list[1]->interpret(local_context);
+	int first= GetNanopascalIntegralType(t, local_context);
+	int second= GetNanopascalIntegralType(t1, local_context);
+	int result= first&second;
+	Nanopascal_Types x(result);
 	return x;
 }
 
 Nanopascal_Types NotNode::interpret(Context& local_context){
-	Nanopascal_Types x(1);
+	auto t= child_list[0]->interpret(local_context);
+	int first= GetNanopascalIntegralType(t, local_context);
+	int result= ~first;
+	Nanopascal_Types x(result);
 	return x;
 }
 
@@ -459,6 +517,7 @@ Nanopascal_Types CharacterNode::interpret(Context& local_context){
 }
 
 Nanopascal_Types BooleanNode::interpret(Context& local_context){
+	std::cout<<"Returning boolean node: "<<value<<std::endl;
 	Nanopascal_Types x(value);
 	return x;
 }

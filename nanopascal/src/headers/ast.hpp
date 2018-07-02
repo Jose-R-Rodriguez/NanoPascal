@@ -4,6 +4,7 @@
 #include <memory>
 #include <functional>
 #include <variant>
+#include <unordered_map>
 #include "common.hpp"
 #define DEFINE_N_ARYNODE(name)\
 	class name##Node : public Node{\
@@ -22,30 +23,27 @@
 			child_list.push_front(std::move(f));\
 		}\
 		std::string toString();\
-		Nanopascal_Types interpret();\
+		Nanopascal_Types interpret(Context& local_context);\
 	};
 #define DEFINE_PRIMITIVE_NODE(name, type)\
 	class name##Node : public Node{\
 		public:\
-		Nanopascal_Types interpret();\
+		Nanopascal_Types interpret(Context& local_context);\
 		type value;\
 		name##Node(type value) : value(value){}\
 		std::string toString();\
 	};
 
 using Nanopascal_Types = std::variant<int, char, bool, std::string>;
-/*typedef union Nanopascal_Types{
-	Nanopascal_Types(int param) : num(param){};
-	Nanopascal_Types(char param) : character(param){};
-	Nanopascal_Types(bool param) : boolean(param){};
-	Nanopascal_Types(std::string param) : str(param){}
-	Nanopascal_Types(const Nanopascal_Types& x){}
-	int num;
-	char character;
-	std::string str;
-	bool boolean;
-	~Nanopascal_Types(){}
-}Nanopascal_Types;*/
+
+struct Context{
+	std::unordered_map<std::string, int> variables;
+	void PrintContext(){
+		for (const auto& variable : variables){
+			std::cout<<std::get<0>(variable)<<"\t\t"<<std::get<1>(variable)<<std::endl;
+		}
+	}
+};
 
 class Node;
 using Node_Pointer= std::unique_ptr<Node>;
@@ -54,7 +52,7 @@ using NP_List= std::deque<Node_Pointer>;
 class Node{
 public:
 	virtual std::string toString() =0;
-	virtual Nanopascal_Types interpret()=0;
+	virtual Nanopascal_Types interpret(Context& local_context)=0;
 	virtual ~Node(){}
 };
 

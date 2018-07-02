@@ -3,8 +3,8 @@ SRC_DIR= ./src
 BIN_DIR= ./bin
 HDR_DIR= $(SRC_DIR)/headers
 BIN= bin
-#GCC= g++
-GCC= clang++
+GCC= g++
+#GCC= clang++
 GCC-FLAGS= -std=c++17 -g -c -I $(HDR_DIR) -o
 TEST-FILES_DIR= ./test
 

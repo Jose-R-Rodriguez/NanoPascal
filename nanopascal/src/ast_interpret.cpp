@@ -401,12 +401,12 @@ void PrintNanopascalType(Nanopascal_Types param, Context& local_context){
 }
 
 void PrintArguments(ArgumentsNode* initial_node, Context& local_context){
-	if (initial_node->child_list[0]){
+	if (!initial_node->child_list.empty()){
 		auto result= initial_node->child_list[0]->interpret(local_context);
 		PrintNanopascalType(result, local_context);
-		if (initial_node->child_list[1]){
-			ArgListNode* arg_list= dynamic_cast<ArgListNode*>(initial_node->child_list[1].get());
-			ArgumentsNode* argmt_ptr= dynamic_cast<ArgumentsNode*>(arg_list->child_list[0].get());
+		if (initial_node->child_list.size() > 1){
+			ArgListNode* arg_list= static_cast<ArgListNode*>(initial_node->child_list[1].get());
+			ArgumentsNode* argmt_ptr= static_cast<ArgumentsNode*>(arg_list->child_list[0].get());
 			PrintArguments(argmt_ptr, local_context);
 		}
 	}
@@ -414,7 +414,7 @@ void PrintArguments(ArgumentsNode* initial_node, Context& local_context){
 
 Nanopascal_Types WritelnNode::interpret(Context& local_context){
 	if (child_list[0]){
-		ArgumentsNode* argmt_ptr= dynamic_cast<ArgumentsNode*>(child_list[0].get());
+		ArgumentsNode* argmt_ptr= static_cast<ArgumentsNode*>(child_list[0].get());
 		PrintArguments(argmt_ptr, local_context);
 	}
 	std::cout<<std::endl;
